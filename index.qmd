@@ -125,13 +125,6 @@ format:
         <label for="filter-macro-country" style="font-size: 12px; font-weight: 600; color: var(--lukb-blue-900);">Land / Region:</label>
         <select id="filter-macro-country" class="lukb-select">
           <option value="all">Alle Länder / Regionen</option>
-          <option value="CH">Schweiz</option>
-          <option value="EU">Eurozone / Euroraum</option>
-          <option value="DE">Deutschland</option>
-          <option value="GB">UK</option>
-          <option value="US">USA</option>
-          <option value="JP">Japan</option>
-          <option value="CN">China</option>
         </select>
       </div>
     </div>

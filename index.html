@@ -647,13 +647,6 @@ flex-direction: column;
         <label for="filter-macro-country" style="font-size: 12px; font-weight: 600; color: var(--lukb-blue-900);">Land / Region:</label>
         <select id="filter-macro-country" class="lukb-select">
           <option value="all">Alle Länder / Regionen</option>
-          <option value="CH">Schweiz</option>
-          <option value="EU">Eurozone / Euroraum</option>
-          <option value="DE">Deutschland</option>
-          <option value="GB">UK</option>
-          <option value="US">USA</option>
-          <option value="JP">Japan</option>
-          <option value="CN">China</option>
         </select>
       </div>
     </div>
@@ -783,7 +776,7 @@ const COUNTRY_MAP = {
   'de': { code: 'de', name: 'Deutschland' },
   'eurozone': { code: 'eu', name: 'Eurozone' },
   'euroraum': { code: 'eu', name: 'Euroraum' },
-  'eu': { code: 'eu', name: 'Euroraum' },
+  'eu': { code: 'eu', name: 'Eurozone' },
   'usa': { code: 'us', name: 'USA' },
   'us': { code: 'us', name: 'USA' },
   'uk': { code: 'gb', name: 'UK' },
@@ -858,8 +851,10 @@ function formatMonthYearDE(dateStr) {
 }
 
 // -------------------------------------------------------------
-// 1. RENDER MAKROKALENDER (Day Grouping & Flexible Key Adapter)
+// 1. RENDER MAKROKALENDER (Dynamic Country Filter & Day Grouping)
 // -------------------------------------------------------------
+let cachedMacroRawData = [];
+
 function normalizeMacroData(raw) {
   if (!raw || !Array.isArray(raw)) return [];
   let currentDatum = '';
@@ -886,16 +881,72 @@ function normalizeMacroData(raw) {
   });
 }
 
-function renderMacroCalendar(rawData) {
+function populateMacroCountryDropdown(data) {
+  const select = document.getElementById('filter-macro-country');
+  if (!select) return;
+
+  // Extract unique countries
+  const countriesMap = new Map();
+  data.forEach(item => {
+    if (item.land && item.land.trim() !== '') {
+      const code = item.land_code || 'WORLD';
+      if (!countriesMap.has(code)) {
+        countriesMap.set(code, item.land.trim());
+      }
+    }
+  });
+
+  const currentVal = DashboardState.macroFilterCountry;
+
+  // Sort country entries: CH first, then alphabetically
+  const entries = Array.from(countriesMap.entries()).sort((a, b) => {
+    if (a[0] === 'CH') return -1;
+    if (b[0] === 'CH') return 1;
+    return a[1].localeCompare(b[1], 'de');
+  });
+
+  let optionsHtml = '<option value="all">Alle Länder / Regionen</option>';
+  entries.forEach(([code, name]) => {
+    const isSelected = code === currentVal ? 'selected' : '';
+    optionsHtml += `<option value="${code}" ${isSelected}>${name}</option>`;
+  });
+
+  select.innerHTML = optionsHtml;
+
+  // Setup change event listener only once
+  if (!select.dataset.listenerAttached) {
+    select.dataset.listenerAttached = 'true';
+    select.addEventListener('change', (e) => {
+      DashboardState.macroFilterCountry = e.target.value;
+      renderMacroCalendar(cachedMacroRawData, false);
+    });
+  }
+
+  // Restore current selection
+  if (currentVal !== 'all' && !countriesMap.has(currentVal)) {
+    DashboardState.macroFilterCountry = 'all';
+    select.value = 'all';
+  } else {
+    select.value = DashboardState.macroFilterCountry;
+  }
+}
+
+function renderMacroCalendar(rawData, updateDropdown = true) {
+  cachedMacroRawData = rawData || [];
   const container = document.getElementById('macro-table-container');
   if (!container) return;
 
-  const data = normalizeMacroData(rawData);
+  const data = normalizeMacroData(cachedMacroRawData);
+
+  if (updateDropdown) {
+    populateMacroCountryDropdown(data);
+  }
+
   const filter = DashboardState.macroFilterCountry;
 
   let filtered = filter === 'all'
     ? data
-    : data.filter(item => item.land_code === filter || (filter === 'CH' && item.land === 'Schweiz'));
+    : data.filter(item => item.land_code === filter || item.land.toLowerCase() === filter.toLowerCase());
 
   if (filtered.length === 0) {
     container.innerHTML = `
@@ -1275,7 +1326,7 @@ function renderCentralBankCalendar(events, todayStr) {
 // -------------------------------------------------------------
 function normalizeForecasts(raw) {
   if (!raw) return null;
-  if (raw.daten && raw.jahre) return raw; // Already nested format
+  if (raw.daten && raw.jahre) return raw;
 
   if (!Array.isArray(raw)) return null;
 
@@ -1501,21 +1552,11 @@ async function initDashboard() {
     const res = await fetch('data/makro_kalender.json');
     if (res.ok) {
       macroData = await res.json();
-    } else {
-      macroData = window.DATA_MAKRO || [];
     }
   } catch (e) {
-    macroData = window.DATA_MAKRO || [];
+    console.error('Fehler beim Laden von makro_kalender.json:', e);
   }
-  renderMacroCalendar(macroData);
-
-  const macroCountryFilter = document.getElementById('filter-macro-country');
-  if (macroCountryFilter) {
-    macroCountryFilter.addEventListener('change', (e) => {
-      DashboardState.macroFilterCountry = e.target.value;
-      renderMacroCalendar(macroData);
-    });
-  }
+  renderMacroCalendar(macroData, true);
 
   // 2. Load Central Bank Meetings Data
   let cbData = [];
@@ -1523,11 +1564,9 @@ async function initDashboard() {
     const res = await fetch('data/zentralbanken.json');
     if (res.ok) {
       cbData = await res.json();
-    } else {
-      cbData = window.DATA_CB || [];
     }
   } catch (e) {
-    cbData = window.DATA_CB || [];
+    console.error('Fehler beim Laden von zentralbanken.json:', e);
   }
   renderCentralBanks(cbData);
   initCbQuickActions(cbData);
@@ -1538,14 +1577,9 @@ async function initDashboard() {
     const res = await fetch('data/prognosen.json');
     if (res.ok) {
       forecastData = await res.json();
-    } else {
-      forecastData = window.DATA_PROGNOSEN || null;
     }
   } catch (e) {
-    forecastData = window.DATA_PROGNOSEN || null;
-  }
-  if (!forecastData && window.DATA_PROGNOSEN) {
-    forecastData = window.DATA_PROGNOSEN;
+    console.error('Fehler beim Laden von prognosen.json:', e);
   }
   if (forecastData) {
     renderForecasts(forecastData);

@@ -1275,7 +1275,7 @@ function exportA4Report() {
             width: '51%',
             stack: [
               {
-                text: '📅 Konjunkturdaten (Laufende Woche)',
+                text: 'Konjunkturdaten (Laufende Woche)',
                 style: 'sectionHeaderBlue'
               },
               {
@@ -1302,7 +1302,7 @@ function exportA4Report() {
             stack: [
               // Central Banks
               {
-                text: '🏛️ Anstehende Notenbank-Zinstermine',
+                text: 'Anstehende Notenbank-Zinstermine',
                 style: 'sectionHeaderBerry'
               },
               {
@@ -1324,7 +1324,7 @@ function exportA4Report() {
               },
               // Forecasts
               {
-                text: '📊 BIP- & Inflationsprognosen (Konsensus)',
+                text: 'BIP- & Inflationsprognosen (Konsensus)',
                 style: 'sectionHeaderBlue'
               },
               {

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 341" width="512" height="341">
+  <rect width="512" height="341" fill="#003399"/>
+  <g fill="#FFCC00" transform="translate(256,170.5) scale(23)">
+    <g id="s"><polygon points="0,-1 0.588,0.809 -0.951,-0.309 0.951,-0.309 -0.588,0.809"/></g>
+    <use href="#s" transform="rotate(30) translate(0,-4)"/>
+    <use href="#s" transform="rotate(60) translate(0,-4)"/>
+    <use href="#s" transform="rotate(90) translate(0,-4)"/>
+    <use href="#s" transform="rotate(120) translate(0,-4)"/>
+    <use href="#s" transform="rotate(150) translate(0,-4)"/>
+    <use href="#s" transform="rotate(180) translate(0,-4)"/>
+    <use href="#s" transform="rotate(210) translate(0,-4)"/>
+    <use href="#s" transform="rotate(240) translate(0,-4)"/>
+    <use href="#s" transform="rotate(270) translate(0,-4)"/>
+    <use href="#s" transform="rotate(300) translate(0,-4)"/>
+    <use href="#s" transform="rotate(330) translate(0,-4)"/>
+    <use href="#s" transform="rotate(0) translate(0,-4)"/>
+  </g>
+</svg>

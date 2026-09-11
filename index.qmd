@@ -93,7 +93,7 @@ format:
     <div class="lukb-header-top">
       <div class="lukb-title-group">
         <h1>Makro- & Zentralbank-Dashboard</h1>
-        <p>Wöchentlicher Konjunkturkalender, anstehende Notenbank-Zinsentscheide und 3-Jahres-Prognosen</p>
+        <p>Wöchentlicher Konjunkturkalender, 3-Jahres-Prognosen und Notenbank-Zeitstrahl</p>
       </div>
       <div class="lukb-header-actions">
         <button type="button" id="btn-export-pdf" class="lukb-btn-export" title="Erzeuge 1-seitiges A4-PDF mit allen Tabellen">
@@ -104,57 +104,65 @@ format:
     </div>
   </header>
 
-  <!-- Navigation / Section Switch (Ohne Gesamtübersicht) -->
-  <nav class="lukb-nav">
-    <button class="lukb-tab-btn active" data-tab="macro">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="0" ry="0"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-      Makrokalender (Laufende Woche)
-    </button>
-    <button class="lukb-tab-btn" data-tab="cb">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2L2 7h20L12 2z"></path></svg>
-      Zentralbanktermine (anstehend)
-    </button>
-    <button class="lukb-tab-btn" data-tab="forecasts">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-      BIP- & Inflationsprognosen
-    </button>
-  </nav>
-
-  <!-- SECTION 1: MAKROKALENDER -->
-  <section id="section-macro" class="lukb-card" style="display: block;">
-    <div class="lukb-card-header">
-      <h2 class="lukb-card-title">
-        <span class="icon">📅</span>
-        Konjunkturdaten der laufenden Woche
-      </h2>
-      <div class="lukb-controls">
-        <label for="filter-macro-country" style="font-size: 12px; font-weight: 600; color: var(--lukb-blue-900);">Land / Region:</label>
-        <select id="filter-macro-country" class="lukb-select">
-          <option value="all">Alle Länder / Regionen</option>
-        </select>
-      </div>
-    </div>
+  <!-- OBERER BEREICH: 2-SPALTIG (LINKS: KONJUNKTURDATEN | RECHTS: PROGNOSEN) -->
+  <div class="lukb-grid-2col">
     
-    <!-- Dynamic Table Container -->
-    <div class="lukb-card-body">
-      <div id="macro-table-container"></div>
-    </div>
+    <!-- LINKS: KONJUNKTURDATEN DER LAUFENDEN WOCHE -->
+    <section id="section-macro" class="lukb-card">
+      <div class="lukb-card-header">
+        <h2 class="lukb-card-title">
+          <span class="icon">📅</span>
+          Konjunkturdaten der laufenden Woche
+        </h2>
+        <div class="lukb-controls">
+          <select id="filter-macro-country" class="lukb-select">
+            <option value="all">Alle Länder / Regionen</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Dynamic Table Container -->
+      <div class="lukb-card-body">
+        <div id="macro-table-container"></div>
+      </div>
 
-    <div class="lukb-footer-note">
-      <span>Datenquelle: LUKB, LSEG</span>
-      <span>Status: Laufende Woche</span>
-    </div>
-  </section>
+      <div class="lukb-footer-note">
+        <span>Datenquelle: LUKB, LSEG</span>
+        <span>Laufende Woche</span>
+      </div>
+    </section>
 
-  <!-- SECTION 2: ZENTRALBANKEN -->
-  <section id="section-cb" class="lukb-card berry-top" style="display: none;">
+    <!-- RECHTS: BIP- & INFLATIONSPROGNOSEN -->
+    <section id="section-forecasts" class="lukb-card">
+      <div class="lukb-card-header">
+        <h2 class="lukb-card-title">
+          <span class="icon">📊</span>
+          BIP- und Inflationsprognosen
+        </h2>
+      </div>
+
+      <!-- Dynamic Forecasts Table Container -->
+      <div class="lukb-card-body">
+        <div id="forecasts-table-container"></div>
+      </div>
+
+      <div class="lukb-footer-note">
+        <span>Quelle: LUKB Research & Consensus</span>
+        <span>Ausblick 2025–2027</span>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- UNTERER BEREICH: ZENTRALBANKEN-ZEITSTRAHL (VOLLBREITE) -->
+  <section id="section-cb" class="lukb-card berry-top">
     <div class="lukb-card-header">
       <h2 class="lukb-card-title">
         <span class="icon">🏛️</span>
-        Zentralbanktermine (Zukünftige Entscheide)
+        Zentralbank-Zinsentscheide (Zeitstrahl)
       </h2>
       <div class="lukb-controls">
-        <span style="font-size: 12px; color: var(--text-muted);">Automatisch gefiltert ab aktuellem Datum</span>
+        <span style="font-size: 12px; color: var(--text-muted);">Proportionale Timeline (heute - 30 Tage bis Ende 2027)</span>
       </div>
     </div>
 
@@ -175,60 +183,14 @@ format:
       </div>
     </div>
 
-    <!-- View Switcher Bar (Tabellen-Ansicht vs Kalender-Ansicht vs Zeitstrahl-Ansicht) -->
-    <div class="cb-view-switch-bar">
-      <div class="cb-view-switch-group">
-        <button type="button" id="cb-view-table-btn" class="cb-view-switch-btn active" data-view="table">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-          Tabellen-Ansicht
-        </button>
-        <button type="button" id="cb-view-cal-btn" class="cb-view-switch-btn" data-view="calendar">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="0" ry="0"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          Kalender-Ansicht
-        </button>
-        <button type="button" id="cb-view-timeline-btn" class="cb-view-switch-btn" data-view="timeline">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="2" y1="12" x2="22" y2="12"></line><circle cx="6" cy="12" r="2.5" fill="currentColor"></circle><circle cx="12" cy="12" r="2.5" fill="currentColor"></circle><circle cx="18" cy="12" r="2.5" fill="currentColor"></circle></svg>
-          Zeitstrahl-Ansicht
-        </button>
-      </div>
-      <div class="cb-view-switch-hint">
-        <span>Horizontale Timeline mit proportionalen Monatsabständen (heute - 30 Tage bis Ende 2027)</span>
-      </div>
-    </div>
-
-    <!-- Table View Container -->
-    <div id="cb-view-table" class="lukb-card-body" style="display: block;">
-      <div id="cb-table-container"></div>
-    </div>
-
-    <!-- Calendar View Container -->
-    <div id="cb-view-calendar" class="lukb-card-body" style="display: none; padding: 20px;">
-      <div id="cb-calendar-container"></div>
-    </div>
-
-    <!-- Timeline View Container -->
-    <div id="cb-view-timeline" class="lukb-card-body" style="display: none; padding: 20px;">
+    <!-- Timeline View Container directly -->
+    <div id="cb-view-timeline" class="lukb-card-body" style="padding: 16px 20px;">
       <div id="cb-timeline-container"></div>
     </div>
 
     <div class="lukb-footer-note">
       <span>Auswahl: SNB, US Fed, EZB, BoJ, BoE, BoC, RBA, Norges Bank, Riksbank, RBNZ</span>
-      <span>Filter: Anstehende Termine ab aktuellem Systemdatum (Tabelle) / Jahresübersicht (Kalender)</span>
-    </div>
-  </section>
-
-  <!-- SECTION 3: BIP- & INFLATIONSPROGNOSEN -->
-  <section id="section-forecasts" class="lukb-card" style="display: none;">
-    <div class="lukb-card-header">
-      <h2 class="lukb-card-title">
-        <span class="icon">📊</span>
-        BIP- und Inflationsprognosen
-      </h2>
-    </div>
-
-    <!-- Dynamic Forecasts Table Container -->
-    <div class="lukb-card-body">
-      <div id="forecasts-table-container"></div>
+      <span>Interaktiver Zeitstrahl: Horizontales Scrollen & Tooltip bei Mouseover</span>
     </div>
   </section>
 

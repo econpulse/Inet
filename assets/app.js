@@ -287,15 +287,15 @@ function renderMacroCalendar(rawData, updateDropdown = true) {
 
     return `
       <tr class="${trClass}">
-        <td style="white-space: nowrap; width: 140px;">${dateDisplay}</td>
-        <td style="width: 80px; text-align: left;">${timeDisplay}</td>
-        <td style="width: 140px;">${getCountryBadge(item.land_code, item.land)}</td>
+        <td style="white-space: nowrap; width: 110px;">${dateDisplay}</td>
+        <td style="width: 55px; text-align: left;">${timeDisplay}</td>
+        <td style="width: 120px;">${getCountryBadge(item.land_code, item.land)}</td>
         <td style="font-weight: 600; color: var(--lukb-blue-900);">
           ${item.indikator}
         </td>
-        <td style="color: var(--text-muted); width: 90px;">${item.periode}</td>
-        <td class="num" style="color: var(--text-muted); width: 90px;">${item.vorher}</td>
-        <td class="num" style="font-weight: 700; color: var(--lukb-berry-600); width: 100px;">${item.erwartung}</td>
+        <td style="color: var(--text-muted); width: 75px;">${item.periode}</td>
+        <td class="num" style="color: var(--text-muted); width: 60px;">${item.vorher}</td>
+        <td class="num" style="font-weight: 700; color: var(--lukb-berry-600); width: 70px;">${item.erwartung}</td>
       </tr>
     `;
   }).join('');
@@ -304,13 +304,13 @@ function renderMacroCalendar(rawData, updateDropdown = true) {
     <table class="lukb-table">
       <thead>
         <tr>
-          <th style="width: 140px;">Datum</th>
-          <th style="width: 80px;">Uhrzeit</th>
-          <th style="width: 140px;">Land</th>
+          <th style="width: 110px;">Datum</th>
+          <th style="width: 55px;">Zeit</th>
+          <th style="width: 120px;">Land</th>
           <th>Indikator</th>
-          <th style="width: 90px;">Periode</th>
-          <th class="num" style="width: 90px;">Vorher</th>
-          <th class="num" style="width: 100px;">Erwartung</th>
+          <th style="width: 75px;">Periode</th>
+          <th class="num" style="width: 60px;">Vorher</th>
+          <th class="num" style="width: 70px;">Erwart.</th>
         </tr>
       </thead>
       <tbody>
@@ -411,50 +411,11 @@ function renderCentralBanks(rawData) {
     });
   }
 
-  initCbViewSwitch();
   updateCentralBankViews();
-}
-
-function initCbViewSwitch() {
-  const btnTable = document.getElementById('cb-view-table-btn');
-  const btnCal = document.getElementById('cb-view-cal-btn');
-  const btnTimeline = document.getElementById('cb-view-timeline-btn');
-
-  const tableSec = document.getElementById('cb-view-table');
-  const calSec = document.getElementById('cb-view-calendar');
-  const timelineSec = document.getElementById('cb-view-timeline');
-
-  const setView = (viewName) => {
-    DashboardState.cbView = viewName;
-    if (btnTable) btnTable.classList.toggle('active', viewName === 'table');
-    if (btnCal) btnCal.classList.toggle('active', viewName === 'calendar');
-    if (btnTimeline) btnTimeline.classList.toggle('active', viewName === 'timeline');
-
-    if (tableSec) tableSec.style.display = viewName === 'table' ? 'block' : 'none';
-    if (calSec) calSec.style.display = viewName === 'calendar' ? 'block' : 'none';
-    if (timelineSec) timelineSec.style.display = viewName === 'timeline' ? 'block' : 'none';
-  };
-
-  if (btnTable && !btnTable.dataset.initialized) {
-    btnTable.dataset.initialized = 'true';
-    btnTable.addEventListener('click', () => setView('table'));
-  }
-
-  if (btnCal && !btnCal.dataset.initialized) {
-    btnCal.dataset.initialized = 'true';
-    btnCal.addEventListener('click', () => setView('calendar'));
-  }
-
-  if (btnTimeline && !btnTimeline.dataset.initialized) {
-    btnTimeline.dataset.initialized = 'true';
-    btnTimeline.addEventListener('click', () => setView('timeline'));
-  }
 }
 
 function updateCentralBankViews() {
   const todayStr = new Date().toISOString().slice(0, 10);
-  renderCentralBankTable(cachedCbEvents, todayStr);
-  renderCentralBankCalendar(cachedCbEvents, todayStr);
   renderCentralBankTimeline(cachedCbEvents, todayStr);
 }
 
@@ -871,9 +832,9 @@ function renderSparklineSvg(values, isBerry = false) {
   const validVals = values.filter(v => v !== undefined && v !== null && !isNaN(v));
   if (validVals.length < 2) return '';
 
-  const w = 46;
-  const h = 20;
-  const pad = 4;
+  const w = 34;
+  const h = 15;
+  const pad = 2;
 
   let min = Math.min(...validVals);
   let max = Math.max(...validVals);
@@ -895,12 +856,12 @@ function renderSparklineSvg(values, isBerry = false) {
   const pathD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
   const areaD = `${pathD} L ${pts[pts.length - 1].x} ${h} L ${pts[0].x} ${h} Z`;
 
-  const dotsHtml = pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="2.2" fill="${dotColor}" />`).join('');
+  const dotsHtml = pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="1.8" fill="${dotColor}" />`).join('');
 
   return `
     <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow: visible; display: inline-block; vertical-align: middle;">
       <path d="${areaD}" fill="${fillColor}" />
-      <path d="${pathD}" fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="${pathD}" fill="none" stroke="${strokeColor}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
       ${dotsHtml}
     </svg>
   `;
@@ -943,20 +904,18 @@ function renderForecasts(raw) {
   const theadHtml = `
     <thead>
       <tr>
-        <th style="width: 22%;">Land / Region</th>
-        <th class="center" colspan="${years.length + 1}" style="background-color: var(--lukb-blue-100); border-left: 2px solid #CBD5E1; color: var(--lukb-blue-900); width: 39%;">
+        <th style="width: 28%;">Land / Region</th>
+        <th class="center" colspan="${years.length}" style="background-color: var(--lukb-blue-100); border-left: 1px solid #CBD5E1; color: var(--lukb-blue-900); width: 36%;">
           Reales BIP-Wachstum (%)
         </th>
-        <th class="center" colspan="${years.length + 1}" style="background-color: #F8EBF2; color: var(--lukb-berry-800); border-left: 2px solid #CBD5E1; width: 39%;">
+        <th class="center" colspan="${years.length}" style="background-color: #F8EBF2; color: var(--lukb-berry-800); border-left: 1px solid #CBD5E1; width: 36%;">
           Inflation / CPI (%)
         </th>
       </tr>
       <tr>
-        <th style="background-color: var(--lukb-blue-50); width: 22%;"></th>
-        ${years.map(y => `<th class="num" style="background-color: var(--lukb-blue-50); width: 9%; color: var(--lukb-blue-900); font-weight: 700;">${y}</th>`).join('')}
-        <th class="center" style="background-color: var(--lukb-blue-50); width: 12%; color: var(--lukb-blue-900); font-weight: 700;">Trend</th>
-        ${years.map(y => `<th class="num" style="background-color: #FDF4F8; width: 9%; color: var(--lukb-berry-800); font-weight: 700;">${y}</th>`).join('')}
-        <th class="center" style="background-color: #FDF4F8; width: 12%; color: var(--lukb-berry-800); font-weight: 700;">Trend</th>
+        <th style="background-color: var(--lukb-blue-50); width: 28%;"></th>
+        ${years.map(y => `<th class="num" style="background-color: var(--lukb-blue-50); width: 12%; color: var(--lukb-blue-900); font-weight: 700;">${y}</th>`).join('')}
+        ${years.map(y => `<th class="num" style="background-color: #FDF4F8; width: 12%; color: var(--lukb-berry-800); font-weight: 700;">${y}</th>`).join('')}
       </tr>
     </thead>
   `;
@@ -967,80 +926,38 @@ function renderForecasts(raw) {
       ? 'style="background-color: #F8FAFD; font-weight: 600;"' 
       : (row.land === 'Welt' ? 'style="background-color: #FAFCFE; font-weight: 600;"' : '');
 
-    const bipVals = years.map(y => row.bip[y] !== undefined ? row.bip[y] : 0);
-    const infVals = years.map(y => row.inflation[y] !== undefined ? row.inflation[y] : 0);
-
     const bipCells = years.map((y, idx) => {
       const val = row.bip[y] !== undefined ? row.bip[y] : 0;
       const isNeg = val < 0;
       const cls = isNeg ? 'forecast-val negative' : (isSpecial ? 'forecast-val special' : 'forecast-val');
       return `
-        <td class="num" style="width: 9%; border-left: ${idx === 0 ? '2px solid #CBD5E1' : 'none'};">
+        <td class="num" style="width: 12%; border-left: ${idx === 0 ? '1px solid #CBD5E1' : 'none'};">
           <span class="${cls}">${val.toFixed(1)}%</span>
         </td>
       `;
     }).join('');
-
-    const bipTrendCell = `
-      <td class="center" style="width: 12%;">
-        <div class="trend-cell">
-          ${renderSparklineSvg(bipVals, false)}
-          ${getTrendBadge(bipVals, false)}
-        </div>
-      </td>
-    `;
 
     const infCells = years.map((y, idx) => {
       const val = row.inflation[y] !== undefined ? row.inflation[y] : 0;
       const isNeg = val < 0;
       const cls = isNeg ? 'forecast-val negative' : 'forecast-val berry';
       return `
-        <td class="num" style="width: 9%; border-left: ${idx === 0 ? '2px solid #CBD5E1' : 'none'};">
+        <td class="num" style="width: 12%; border-left: ${idx === 0 ? '1px solid #CBD5E1' : 'none'};">
           <span class="${cls}">${val.toFixed(1)}%</span>
         </td>
       `;
     }).join('');
 
-    const infTrendCell = `
-      <td class="center" style="width: 12%;">
-        <div class="trend-cell">
-          ${renderSparklineSvg(infVals, true)}
-          ${getTrendBadge(infVals, true)}
-        </div>
-      </td>
-    `;
-
     return `
       <tr ${rowBg}>
-        <td style="font-weight: ${isSpecial ? '700' : '500'}; width: 22%;">${getCountryBadge(row.land_code, row.land)}</td>
+        <td style="font-weight: ${isSpecial ? '700' : '500'}; width: 28%;">${getCountryBadge(row.land_code, row.land)}</td>
         ${bipCells}
-        ${bipTrendCell}
         ${infCells}
-        ${infTrendCell}
       </tr>
     `;
   }).join('');
 
   container.innerHTML = `
-    <div class="forecast-legend">
-      <span style="font-weight: 700; color: var(--lukb-blue-900);">Dynamik (Verlauf 2025–2027 | Trend Δ '27 vs '26):</span>
-      <span style="display: inline-flex; align-items: center; gap: 4px;">
-        <span class="trend-pill positive">↗ Steigend</span>
-        <span>Beschleunigung / Disinflation</span>
-      </span>
-      <span style="display: inline-flex; align-items: center; gap: 4px;">
-        <span class="trend-pill warning">↘ Rückläufig</span>
-        <span>Wachstumsabkühlung</span>
-      </span>
-      <span style="display: inline-flex; align-items: center; gap: 4px;">
-        <span class="trend-pill neutral">→ Stabil</span>
-        <span>Seitwärtsbewegung</span>
-      </span>
-      <span style="margin-left: auto; color: var(--text-muted); font-size: 11.5px;">
-        Daten: LUKB Consensus & Ausblick
-      </span>
-    </div>
-
     <table class="lukb-table" style="table-layout: fixed; width: 100%;">
       ${theadHtml}
       <tbody>
@@ -1166,18 +1083,19 @@ function exportA4Report() {
     ]);
   });
 
-  // 2. Prepare Central Bank Upcoming Meetings Data
+  // 2. Prepare Central Bank Upcoming Meetings Data (Full Width Table)
   const cbEvents = (cachedCbEvents || [])
     .filter(d => DashboardState.selectedBanks.has(d.bank) && d.datum >= todayStr)
     .sort((a, b) => a.datum.localeCompare(b.datum))
-    .slice(0, 7);
+    .slice(0, 10);
 
   const cbBody = [
     [
-      { text: 'Zentralbank', style: 'th', width: '26%' },
-      { text: 'Datum', style: 'th', width: '32%' },
-      { text: 'Woche', style: 'thCenter', width: '15%' },
-      { text: 'Fälligkeit', style: 'thNum', width: '27%' }
+      { text: 'Zentralbank', style: 'th', width: '18%' },
+      { text: 'Institution / Land', style: 'th', width: '32%' },
+      { text: 'Datum', style: 'th', width: '22%' },
+      { text: 'Woche', style: 'thCenter', width: '12%' },
+      { text: 'Fälligkeit', style: 'thNum', width: '16%' }
     ]
   ];
 
@@ -1185,13 +1103,14 @@ function exportA4Report() {
     const countdown = getRelativeTimeBadge(item.datum, todayStr).replace(/<[^>]*>/g, '');
     cbBody.push([
       { text: `${item.bank} (${item.land_code})`, style: 'tdBold' },
+      { text: item.name || item.bank, style: 'tdText' },
       { text: formatDateDE(item.datum), style: 'tdText' },
       { text: `KW ${getISOWeek(item.datum)}`, style: 'tdCenter' },
       { text: countdown, style: 'tdNumBerry' }
     ]);
   });
 
-  // 3. Prepare Forecasts Table Data
+  // 3. Prepare Forecasts Table Data (without trend columns)
   const forecastObj = normalizeForecasts(cachedForecastRawData || []);
   const forecastBody = [
     [
@@ -1230,8 +1149,8 @@ function exportA4Report() {
 
   const docDefinition = {
     pageSize: 'A4',
-    pageOrientation: 'landscape',
-    pageMargins: [26, 20, 26, 18],
+    pageOrientation: 'portrait',
+    pageMargins: [24, 20, 24, 18],
     content: [
       // Top Header
       {
@@ -1246,7 +1165,7 @@ function exportA4Report() {
                   { text: '|  Makro- & Zentralbank-Dashboard', style: 'docTitle' }
                 ]
               },
-              { text: 'Wöchentliche Konjunkturdaten, anstehende Zinsentscheide und 3-Jahres-Prognosen', style: 'docSub' }
+              { text: 'Wöchentliche Konjunkturdaten, 3-Jahres-Prognosen und Notenbank-Entscheide', style: 'docSub' }
             ]
           },
           {
@@ -1261,18 +1180,18 @@ function exportA4Report() {
       },
       {
         canvas: [
-          { type: 'line', x1: 0, y1: 5, x2: 790, y2: 5, lineWidth: 2, lineColor: '#003B6D' },
-          { type: 'line', x1: 0, y1: 8, x2: 790, y2: 8, lineWidth: 1, lineColor: '#B31F59' }
+          { type: 'line', x1: 0, y1: 5, x2: 547, y2: 5, lineWidth: 2, lineColor: '#003B6D' },
+          { type: 'line', x1: 0, y1: 8, x2: 547, y2: 8, lineWidth: 1, lineColor: '#B31F59' }
         ],
         margin: [0, 0, 0, 8]
       },
-      // 2 Columns layout
+      // Top Section: 2 Columns Layout (Macro left, Forecasts right)
       {
-        columnGap: 14,
+        columnGap: 12,
         columns: [
-          // Left Column: Macro Calendar (51% width)
+          // Left Column: Macro Calendar (50% width)
           {
-            width: '51%',
+            width: '50%',
             stack: [
               {
                 text: 'Konjunkturdaten (Laufende Woche)',
@@ -1281,48 +1200,25 @@ function exportA4Report() {
               {
                 table: {
                   headerRows: 1,
-                  widths: ['20%', '11%', '17%', '32%', '10%', '10%'],
+                  widths: ['22%', '12%', '18%', '30%', '9%', '9%'],
                   body: macroBody
                 },
                 layout: {
                   hLineWidth: (i) => (i === 0 || i === 1) ? 1.5 : 0.5,
                   vLineWidth: () => 0,
                   hLineColor: (i) => (i === 1) ? '#003B6D' : '#E2E8F0',
-                  paddingLeft: () => 3,
-                  paddingRight: () => 3,
-                  paddingTop: () => 2.2,
-                  paddingBottom: () => 2.2
+                  paddingLeft: () => 2.5,
+                  paddingRight: () => 2.5,
+                  paddingTop: () => 2,
+                  paddingBottom: () => 2
                 }
               }
             ]
           },
-          // Right Column: Central Banks + Forecasts (49% width)
+          // Right Column: Forecasts (50% width)
           {
-            width: '49%',
+            width: '50%',
             stack: [
-              // Central Banks
-              {
-                text: 'Anstehende Notenbank-Zinstermine',
-                style: 'sectionHeaderBerry'
-              },
-              {
-                table: {
-                  headerRows: 1,
-                  widths: ['26%', '32%', '15%', '27%'],
-                  body: cbBody
-                },
-                layout: {
-                  hLineWidth: (i) => (i === 0 || i === 1) ? 1.5 : 0.5,
-                  vLineWidth: () => 0,
-                  hLineColor: (i) => (i === 1) ? '#B31F59' : '#E2E8F0',
-                  paddingLeft: () => 3,
-                  paddingRight: () => 3,
-                  paddingTop: () => 2.2,
-                  paddingBottom: () => 2.2
-                },
-                margin: [0, 0, 0, 9]
-              },
-              // Forecasts
               {
                 text: 'BIP- & Inflationsprognosen (Konsensus)',
                 style: 'sectionHeaderBlue'
@@ -1330,7 +1226,7 @@ function exportA4Report() {
               {
                 table: {
                   headerRows: 2,
-                  widths: ['22%', '13%', '13%', '13%', '13%', '13%', '13%'],
+                  widths: ['25%', '12.5%', '12.5%', '12.5%', '12.5%', '12.5%', '12.5%'],
                   body: forecastBody
                 },
                 layout: {
@@ -1338,19 +1234,45 @@ function exportA4Report() {
                   vLineWidth: (i) => (i === 1 || i === 4) ? 1 : 0,
                   hLineColor: (i) => (i === 2) ? '#003B6D' : '#E2E8F0',
                   vLineColor: () => '#CBD5E1',
-                  paddingLeft: () => 3,
-                  paddingRight: () => 3,
-                  paddingTop: () => 2,
-                  paddingBottom: () => 2
+                  paddingLeft: () => 2.5,
+                  paddingRight: () => 2.5,
+                  paddingTop: () => 1.8,
+                  paddingBottom: () => 1.8
                 }
               }
             ]
           }
         ]
       },
+      // Bottom Section: Central Banks full width
+      {
+        margin: [0, 10, 0, 0],
+        stack: [
+          {
+            text: 'Anstehende Notenbank-Zinsentscheide (Zentralbanken)',
+            style: 'sectionHeaderBerry'
+          },
+          {
+            table: {
+              headerRows: 1,
+              widths: ['18%', '32%', '22%', '12%', '16%'],
+              body: cbBody
+            },
+            layout: {
+              hLineWidth: (i) => (i === 0 || i === 1) ? 1.5 : 0.5,
+              vLineWidth: () => 0,
+              hLineColor: (i) => (i === 1) ? '#B31F59' : '#E2E8F0',
+              paddingLeft: () => 3,
+              paddingRight: () => 3,
+              paddingTop: () => 2.2,
+              paddingBottom: () => 2.2
+            }
+          }
+        ]
+      },
       // Footer
       {
-        margin: [0, 8, 0, 0],
+        margin: [0, 10, 0, 0],
         columns: [
           { text: 'Datenquelle: LUKB Research, LSEG, Zentralbanken | Alle Angaben ohne Gewähr', style: 'footerText' },
           { text: 'Luzerner Kantonalbank AG • Intranet Executive Briefing', style: 'footerCenter', alignment: 'center' },
@@ -1367,24 +1289,24 @@ function exportA4Report() {
       metaBadge: { fontSize: 7, color: '#64748B' },
       sectionHeaderBlue: { fontSize: 8.5, bold: true, color: '#003B6D', margin: [0, 0, 0, 3] },
       sectionHeaderBerry: { fontSize: 8.5, bold: true, color: '#B31F59', margin: [0, 0, 0, 3] },
-      th: { fontSize: 7, bold: true, color: '#003B6D', fillColor: '#F0F5FA' },
-      thNum: { fontSize: 7, bold: true, color: '#003B6D', fillColor: '#F0F5FA', alignment: 'right' },
-      thCenter: { fontSize: 7, bold: true, color: '#003B6D', fillColor: '#F0F5FA', alignment: 'center' },
-      thGroupBlue: { fontSize: 7, bold: true, color: '#003B6D', fillColor: '#E1EDF7' },
-      thGroupBerry: { fontSize: 7, bold: true, color: '#B31F59', fillColor: '#FDF0F6' },
-      thSubBlue: { fontSize: 6.5, bold: true, color: '#003B6D', fillColor: '#F0F5FA', alignment: 'right' },
-      thSubBerry: { fontSize: 6.5, bold: true, color: '#B31F59', fillColor: '#FDF7FA', alignment: 'right' },
-      tdText: { fontSize: 6.8, color: '#1E293B' },
-      tdBold: { fontSize: 6.8, bold: true, color: '#003B6D' },
-      tdBoldBlue: { fontSize: 6.8, bold: true, color: '#003B6D' },
-      tdCode: { fontSize: 6.5, color: '#334155' },
-      tdDate: { fontSize: 6.8, bold: true, color: '#003B6D' },
-      tdMuted: { fontSize: 6.8, color: '#94A3B8' },
-      tdCenter: { fontSize: 6.8, alignment: 'center', color: '#003B6D', bold: true },
-      tdNum: { fontSize: 6.8, alignment: 'right', color: '#1E293B' },
-      tdNumBold: { fontSize: 6.8, alignment: 'right', bold: true, color: '#003B6D' },
-      tdNumBerry: { fontSize: 6.8, alignment: 'right', bold: true, color: '#B31F59' },
-      tdNumBerryBold: { fontSize: 6.8, alignment: 'right', bold: true, color: '#B31F59' },
+      th: { fontSize: 6.8, bold: true, color: '#003B6D', fillColor: '#F0F5FA' },
+      thNum: { fontSize: 6.8, bold: true, color: '#003B6D', fillColor: '#F0F5FA', alignment: 'right' },
+      thCenter: { fontSize: 6.8, bold: true, color: '#003B6D', fillColor: '#F0F5FA', alignment: 'center' },
+      thGroupBlue: { fontSize: 6.8, bold: true, color: '#003B6D', fillColor: '#E1EDF7' },
+      thGroupBerry: { fontSize: 6.8, bold: true, color: '#B31F59', fillColor: '#FDF0F6' },
+      thSubBlue: { fontSize: 6.3, bold: true, color: '#003B6D', fillColor: '#F0F5FA', alignment: 'right' },
+      thSubBerry: { fontSize: 6.3, bold: true, color: '#B31F59', fillColor: '#FDF7FA', alignment: 'right' },
+      tdText: { fontSize: 6.6, color: '#1E293B' },
+      tdBold: { fontSize: 6.6, bold: true, color: '#003B6D' },
+      tdBoldBlue: { fontSize: 6.6, bold: true, color: '#003B6D' },
+      tdCode: { fontSize: 6.3, color: '#334155' },
+      tdDate: { fontSize: 6.6, bold: true, color: '#003B6D' },
+      tdMuted: { fontSize: 6.6, color: '#94A3B8' },
+      tdCenter: { fontSize: 6.6, alignment: 'center', color: '#003B6D', bold: true },
+      tdNum: { fontSize: 6.6, alignment: 'right', color: '#1E293B' },
+      tdNumBold: { fontSize: 6.6, alignment: 'right', bold: true, color: '#003B6D' },
+      tdNumBerry: { fontSize: 6.6, alignment: 'right', bold: true, color: '#B31F59' },
+      tdNumBerryBold: { fontSize: 6.6, alignment: 'right', bold: true, color: '#B31F59' },
       footerText: { fontSize: 6.5, color: '#94A3B8' },
       footerCenter: { fontSize: 6.5, color: '#64748B', bold: true }
     },

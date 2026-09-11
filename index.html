@@ -393,56 +393,156 @@ background-color: var(--lukb-blue-200);
 color: var(--lukb-blue-900);
 }
 
-.cb-next-meeting-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-gap: 16px;
-padding: 20px;
-background-color: #FAFCFE;
-border-bottom: 1px solid var(--border-light);
-}
-.cb-mini-card {
-background: #FFFFFF;
-border: 1px solid var(--border-light);
-border-left: 4px solid var(--lukb-blue-800);
-padding: 14px;
-display: flex;
-flex-direction: column;
-justify-content: space-between;
-transition: transform 0.15s ease, border-color 0.15s ease;
-}
-.cb-mini-card:hover {
-border-color: var(--lukb-blue-600);
-border-left-color: var(--lukb-berry-600);
-}
-.cb-mini-card .header {
+.cb-view-switch-bar {
 display: flex;
 justify-content: space-between;
 align-items: center;
-margin-bottom: 8px;
+padding: 10px 20px;
+background-color: #FAFCFE;
+border-bottom: 1px solid var(--border-light);
+flex-wrap: wrap;
+gap: 12px;
 }
-.cb-mini-card .bank-code {
-font-weight: 700;
-font-size: 15px;
-color: var(--lukb-blue-900);
+.cb-view-switch-group {
+display: inline-flex;
+border: 1px solid var(--border-dark);
+background-color: var(--bg-white);
 }
-.cb-mini-card .meeting-date {
+.cb-view-switch-btn {
+padding: 6px 16px;
+font-family: var(--font-family-main);
 font-size: 13px;
 font-weight: 600;
-color: var(--lukb-berry-600);
+border: none;
+background-color: transparent;
+color: var(--text-dark);
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+gap: 6px;
+transition: all 0.15s ease;
 }
-.cb-mini-card .rate-info {
-display: flex;
-justify-content: space-between;
+.cb-view-switch-btn:hover {
+background-color: var(--lukb-blue-50);
+color: var(--lukb-blue-900);
+}
+.cb-view-switch-btn.active {
+background-color: var(--lukb-blue-800);
+color: #FFFFFF;
+}
+.cb-view-switch-hint {
 font-size: 12px;
 color: var(--text-muted);
-margin-top: 6px;
-padding-top: 6px;
-border-top: 1px dashed var(--border-light);
 }
-.cb-mini-card .rate-val {
+
+.cb-quarter-row {
+margin-bottom: 20px;
+}
+.cb-quarter-row:last-child {
+margin-bottom: 0;
+}
+.cb-calendar-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 16px;
+align-items: stretch;
+}
+@media (max-width: 1000px) {
+.cb-calendar-grid {
+grid-template-columns: 1fr;
+}
+}
+.cb-month-card {
+background-color: var(--bg-white);
+border: 1px solid var(--border-light);
+border-top: 3px solid var(--lukb-blue-800);
+display: flex;
+flex-direction: column;
+min-height: 200px;
+box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+transition: all 0.15s ease;
+}
+.cb-month-card.is-current-month {
+border-top-color: var(--lukb-berry-600);
+border-left: 2px solid var(--lukb-berry-600);
+box-shadow: 0 0 0 1px var(--lukb-blue-200);
+}
+.cb-month-card.is-past-month {
+opacity: 0.55;
+background-color: #F8FAFC;
+border-color: #E2E8F0;
+}
+.cb-month-card.is-past-month:hover {
+opacity: 0.9;
+}
+.cb-month-card-header {
+padding: 9px 14px;
+background-color: var(--lukb-blue-50);
+border-bottom: 1px solid var(--lukb-blue-100);
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.cb-month-card-title {
+font-size: 13px;
 font-weight: 700;
-color: var(--text-dark);
+color: var(--lukb-blue-900);
+}
+.cb-month-card-body {
+padding: 10px 12px;
+flex-grow: 1;
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+.cb-calendar-event {
+background-color: #FAFCFE;
+border: 1px solid var(--border-light);
+border-left: 3px solid var(--lukb-blue-700);
+padding: 6px 10px;
+display: flex;
+flex-direction: column;
+gap: 3px;
+}
+.cb-calendar-event.is-past-meeting {
+opacity: 0.55;
+border-left-color: #94A3B8;
+background-color: #F1F5F9;
+}
+.cb-cal-top {
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-size: 12.5px;
+}
+.cb-cal-bank {
+font-weight: 700;
+color: var(--lukb-blue-900);
+display: flex;
+align-items: center;
+gap: 6px;
+}
+.cb-cal-date {
+font-weight: 600;
+font-size: 12px;
+color: var(--lukb-berry-600);
+}
+.cb-calendar-event.is-past-meeting .cb-cal-date {
+color: var(--text-muted);
+}
+.cb-cal-sub {
+font-size: 11px;
+color: var(--text-muted);
+display: flex;
+justify-content: space-between;
+}
+.cb-no-events {
+color: #94A3B8;
+font-size: 12px;
+font-style: italic;
+text-align: center;
+margin: auto 0;
+padding: 24px 0;
 }
 
 .metric-bar-container {
@@ -597,22 +697,36 @@ flex-direction: column;
       </div>
     </div>
 
-    <!-- Mini Overview Cards of Next Meetings -->
-    <div style="padding: 14px 20px 0 20px;">
-      <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--lukb-berry-700);">Nächste Zinsentscheide der gewählten Banken</span>
-    </div>
-    <div id="cb-next-meetings" class="cb-next-meeting-grid">
-      <!-- Dynamically populated via JS -->
+    <!-- View Switcher Bar (Tabellen-Ansicht vs Kalender-Ansicht) -->
+    <div class="cb-view-switch-bar">
+      <div class="cb-view-switch-group">
+        <button type="button" id="cb-view-table-btn" class="cb-view-switch-btn active" data-view="table">
+          <svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          Tabellen-Ansicht
+        </button>
+        <button type="button" id="cb-view-cal-btn" class="cb-view-switch-btn" data-view="calendar">
+          <svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="0" ry="0" /><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Kalender-Ansicht
+        </button>
+      </div>
+      <div class="cb-view-switch-hint">
+        <span>Gitter-Darstellung nach Quartalen (3 Monate pro Zeile)</span>
+      </div>
     </div>
 
-    <!-- Full Schedule Table Container -->
-    <div class="lukb-card-body">
+    <!-- Table View Container -->
+    <div id="cb-view-table" class="lukb-card-body" style="display: block;">
       <div id="cb-table-container"></div>
+    </div>
+
+    <!-- Calendar View Container -->
+    <div id="cb-view-calendar" class="lukb-card-body" style="display: none; padding: 20px;">
+      <div id="cb-calendar-container"></div>
     </div>
 
     <div class="lukb-footer-note">
       <span>Auswahl: SNB, EZB, Fed, BoE, BoJ, BoC, RBA, Norges Bank, Riksbank, RBNZ</span>
-      <span>Filter: Anstehende Termine ab aktuellem Systemdatum</span>
+      <span>Filter: Anstehende Termine ab aktuellem Systemdatum (Tabelle) / Jahresübersicht (Kalender)</span>
     </div>
   </section>
 
@@ -670,6 +784,9 @@ flex-direction: column;
   { "bank": "SNB", "short": "SNB", "name": "Schweizerische Nationalbank", "land": "Schweiz", "land_code": "CH", "datum": "2027-09-23", "uhrzeit": "09:30", "leitzins_aktuell": "0.25%", "erwartung": "0.25%", "typ": "Geldpolitische Lagebeurteilung" },
   { "bank": "SNB", "short": "SNB", "name": "Schweizerische Nationalbank", "land": "Schweiz", "land_code": "CH", "datum": "2027-12-09", "uhrzeit": "09:30", "leitzins_aktuell": "0.25%", "erwartung": "0.25%", "typ": "Geldpolitische Lagebeurteilung" },
 
+  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-01-22", "uhrzeit": "14:15", "leitzins_aktuell": "2.25%", "erwartung": "2.25%", "typ": "Zinsentscheid" },
+  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-03-12", "uhrzeit": "14:15", "leitzins_aktuell": "2.25%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
+  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-04-30", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid" },
   { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-06-11", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
   { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-07-23", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid" },
   { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-09-10", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
@@ -679,14 +796,21 @@ flex-direction: column;
   { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2027-03-11", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
   { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2027-04-29", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid" },
 
+  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-01-28", "uhrzeit": "19:00", "leitzins_aktuell": "3.75%", "erwartung": "3.75%", "typ": "FOMC Zinsentscheid" },
+  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-03-18", "uhrzeit": "19:00", "leitzins_aktuell": "3.75%", "erwartung": "3.50%", "typ": "FOMC Zinsentscheid & SEP" },
+  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-05-06", "uhrzeit": "19:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "FOMC Zinsentscheid" },
   { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-06-17", "uhrzeit": "19:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "FOMC Zinsentscheid & SEP" },
   { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-07-29", "uhrzeit": "19:00", "leitzins_aktuell": "3.50%", "erwartung": "3.25%", "typ": "FOMC Zinsentscheid" },
   { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-09-16", "uhrzeit": "19:00", "leitzins_aktuell": "3.25%", "erwartung": "3.25%", "typ": "FOMC Zinsentscheid & SEP" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-10-28", "uhrzeit": "19:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "FOMC Zinsentscheid" },
+  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-10-28", "uhrzeit": "19:00", "leitzins_aktuell": "3.25%", "erwartung": "3.00%", "typ": "FOMC Zinsentscheid" },
   { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-12-09", "uhrzeit": "19:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "FOMC Zinsentscheid & SEP" },
   { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2027-01-27", "uhrzeit": "19:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "FOMC Zinsentscheid" },
   { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2027-03-17", "uhrzeit": "19:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "FOMC Zinsentscheid & SEP" },
 
+  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-02-05", "uhrzeit": "13:00", "leitzins_aktuell": "3.75%", "erwartung": "3.75%", "typ": "MPC Zinsentscheid & MPR" },
+  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-03-19", "uhrzeit": "13:00", "leitzins_aktuell": "3.75%", "erwartung": "3.50%", "typ": "MPC Zinsentscheid" },
+  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-05-07", "uhrzeit": "13:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "MPC Zinsentscheid & MPR" },
+  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-06-18", "uhrzeit": "13:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "MPC Zinsentscheid" },
   { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-08-06", "uhrzeit": "13:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "MPC Zinsentscheid & MPR" },
   { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-09-17", "uhrzeit": "13:00", "leitzins_aktuell": "3.50%", "erwartung": "3.25%", "typ": "MPC Zinsentscheid" },
   { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-11-05", "uhrzeit": "13:00", "leitzins_aktuell": "3.25%", "erwartung": "3.25%", "typ": "MPC Zinsentscheid & MPR" },
@@ -694,6 +818,10 @@ flex-direction: column;
   { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2027-02-04", "uhrzeit": "13:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid & MPR" },
   { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2027-03-18", "uhrzeit": "13:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid" },
 
+  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-01-23", "uhrzeit": "04:30", "leitzins_aktuell": "0.75%", "erwartung": "0.75%", "typ": "Zinsentscheid & Ausblick" },
+  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-03-19", "uhrzeit": "04:30", "leitzins_aktuell": "0.75%", "erwartung": "1.00%", "typ": "Zinsentscheid" },
+  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-04-30", "uhrzeit": "04:30", "leitzins_aktuell": "1.00%", "erwartung": "1.00%", "typ": "Zinsentscheid & Ausblick" },
+  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-06-12", "uhrzeit": "04:30", "leitzins_aktuell": "1.00%", "erwartung": "1.00%", "typ": "Zinsentscheid" },
   { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-07-31", "uhrzeit": "04:30", "leitzins_aktuell": "1.00%", "erwartung": "1.00%", "typ": "Zinsentscheid & Ausblick" },
   { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-09-18", "uhrzeit": "04:30", "leitzins_aktuell": "1.00%", "erwartung": "1.25%", "typ": "Zinsentscheid" },
   { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-10-30", "uhrzeit": "04:30", "leitzins_aktuell": "1.25%", "erwartung": "1.25%", "typ": "Zinsentscheid & Ausblick" },
@@ -701,30 +829,50 @@ flex-direction: column;
   { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2027-01-22", "uhrzeit": "04:30", "leitzins_aktuell": "1.25%", "erwartung": "1.50%", "typ": "Zinsentscheid & Ausblick" },
   { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2027-03-19", "uhrzeit": "04:30", "leitzins_aktuell": "1.50%", "erwartung": "1.50%", "typ": "Zinsentscheid" },
 
+  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-01-28", "uhrzeit": "15:45", "leitzins_aktuell": "2.75%", "erwartung": "2.75%", "typ": "Zinsentscheid & MPR" },
+  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-03-11", "uhrzeit": "15:45", "leitzins_aktuell": "2.75%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
+  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-04-15", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
+  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-06-03", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
   { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-07-29", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
   { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-09-09", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
   { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-10-28", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
   { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-12-09", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
   { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2027-01-27", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
 
+  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-02-17", "uhrzeit": "05:30", "leitzins_aktuell": "3.60%", "erwartung": "3.60%", "typ": "Zinsentscheid & SMP" },
+  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-03-31", "uhrzeit": "05:30", "leitzins_aktuell": "3.60%", "erwartung": "3.35%", "typ": "Zinsentscheid" },
+  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-05-19", "uhrzeit": "05:30", "leitzins_aktuell": "3.35%", "erwartung": "3.35%", "typ": "Zinsentscheid & SMP" },
+  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-07-07", "uhrzeit": "05:30", "leitzins_aktuell": "3.35%", "erwartung": "3.35%", "typ": "Zinsentscheid" },
   { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-08-11", "uhrzeit": "05:30", "leitzins_aktuell": "3.35%", "erwartung": "3.35%", "typ": "Zinsentscheid & SMP" },
   { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-09-29", "uhrzeit": "05:30", "leitzins_aktuell": "3.35%", "erwartung": "3.10%", "typ": "Zinsentscheid" },
   { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-11-03", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid & SMP" },
   { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-12-08", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid" },
   { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2027-02-16", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid & SMP" },
 
+  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-01-22", "uhrzeit": "10:00", "leitzins_aktuell": "3.75%", "erwartung": "3.75%", "typ": "Zwischenbericht" },
+  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-03-19", "uhrzeit": "10:00", "leitzins_aktuell": "3.75%", "erwartung": "3.50%", "typ": "Zinsentscheid & MPR" },
+  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-05-07", "uhrzeit": "10:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Zwischenbericht" },
+  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-06-18", "uhrzeit": "10:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Zinsentscheid & MPR" },
   { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-08-13", "uhrzeit": "10:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Zwischenbericht" },
   { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-09-17", "uhrzeit": "10:00", "leitzins_aktuell": "3.50%", "erwartung": "3.25%", "typ": "Zinsentscheid & MPR" },
   { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-11-05", "uhrzeit": "10:00", "leitzins_aktuell": "3.25%", "erwartung": "3.25%", "typ": "Zwischenbericht" },
   { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-12-17", "uhrzeit": "10:00", "leitzins_aktuell": "3.25%", "erwartung": "3.00%", "typ": "Zinsentscheid & MPR" },
   { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2027-01-21", "uhrzeit": "10:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zwischenbericht" },
 
+  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-02-05", "uhrzeit": "09:30", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Geldpolitische Aktualisierung" },
+  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-03-19", "uhrzeit": "09:30", "leitzins_aktuell": "2.50%", "erwartung": "2.25%", "typ": "Geldpolitischer Bericht" },
+  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-05-07", "uhrzeit": "09:30", "leitzins_aktuell": "2.25%", "erwartung": "2.25%", "typ": "Geldpolitische Aktualisierung" },
+  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-06-18", "uhrzeit": "09:30", "leitzins_aktuell": "2.25%", "erwartung": "2.25%", "typ": "Geldpolitischer Bericht" },
   { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-08-19", "uhrzeit": "09:30", "leitzins_aktuell": "2.25%", "erwartung": "2.25%", "typ": "Geldpolitische Aktualisierung" },
   { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-09-22", "uhrzeit": "09:30", "leitzins_aktuell": "2.25%", "erwartung": "2.00%", "typ": "Geldpolitischer Bericht" },
   { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-11-04", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitische Aktualisierung" },
   { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-12-17", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitischer Bericht" },
   { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2027-02-04", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitische Aktualisierung" },
 
+  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-02-18", "uhrzeit": "03:00", "leitzins_aktuell": "3.75%", "erwartung": "3.50%", "typ": "Monetary Policy Statement" },
+  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-04-08", "uhrzeit": "03:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Zinsentscheid" },
+  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-05-27", "uhrzeit": "03:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Monetary Policy Statement" },
+  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-07-08", "uhrzeit": "03:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Zinsentscheid" },
   { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-08-19", "uhrzeit": "03:00", "leitzins_aktuell": "3.50%", "erwartung": "3.25%", "typ": "Monetary Policy Statement" },
   { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-10-07", "uhrzeit": "03:00", "leitzins_aktuell": "3.25%", "erwartung": "3.00%", "typ": "Zinsentscheid" },
   { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-11-25", "uhrzeit": "03:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Monetary Policy Statement" },
@@ -967,24 +1115,13 @@ function renderMacroCalendar(data) {
 }
 
 // -------------------------------------------------------------
-// 2. RENDER ZENTRALBANKEN (System Date Filter, Default Sort, Checkboxes)
+// 2. RENDER ZENTRALBANKEN (Table & Calendar Views, System Date Filter, Checkboxes)
 // -------------------------------------------------------------
+let cachedCbData = [];
+
 function renderCentralBanks(data) {
+  cachedCbData = data || [];
   const checkboxGrid = document.getElementById('cb-checkbox-grid');
-  const cardGrid = document.getElementById('cb-next-meetings');
-  const tableContainer = document.getElementById('cb-table-container');
-
-  // Today ISO date string (e.g. "2026-09-11")
-  const todayStr = new Date().toISOString().slice(0, 10);
-
-  // Filter out past meetings (system date is filter)
-  const futureData = data.filter(d => d.datum >= todayStr);
-
-  // Sort default by date and time ascending
-  futureData.sort((a, b) => {
-    if (a.datum !== b.datum) return a.datum.localeCompare(b.datum);
-    return a.uhrzeit.localeCompare(b.uhrzeit);
-  });
 
   // Render Checkboxes (if not already rendered)
   if (checkboxGrid && checkboxGrid.children.length === 0) {
@@ -1010,132 +1147,238 @@ function renderCentralBanks(data) {
           DashboardState.selectedBanks.delete(bankId);
           label.classList.remove('is-checked');
         }
-        renderCentralBankCardsAndTable(futureData);
+        updateCentralBankViews();
       });
     });
   }
 
-  renderCentralBankCardsAndTable(futureData);
+  // Setup View Switch Buttons (if not already initialized)
+  initCbViewSwitch();
+
+  // Render both views
+  updateCentralBankViews();
 }
 
-function renderCentralBankCardsAndTable(futureData) {
-  const cardGrid = document.getElementById('cb-next-meetings');
-  const tableContainer = document.getElementById('cb-table-container');
+function initCbViewSwitch() {
+  const btnTable = document.getElementById('cb-view-table-btn');
+  const btnCal = document.getElementById('cb-view-cal-btn');
 
-  // Filter by selected bank checkboxes
-  const filteredData = futureData.filter(d => {
-    // Check if bank matches any selected bank config
+  if (btnTable && !btnTable.dataset.initialized) {
+    btnTable.dataset.initialized = 'true';
+    btnTable.addEventListener('click', () => {
+      DashboardState.cbView = 'table';
+      btnTable.classList.add('active');
+      if (btnCal) btnCal.classList.remove('active');
+      const tableSec = document.getElementById('cb-view-table');
+      const calSec = document.getElementById('cb-view-calendar');
+      if (tableSec) tableSec.style.display = 'block';
+      if (calSec) calSec.style.display = 'none';
+    });
+  }
+
+  if (btnCal && !btnCal.dataset.initialized) {
+    btnCal.dataset.initialized = 'true';
+    btnCal.addEventListener('click', () => {
+      DashboardState.cbView = 'calendar';
+      btnCal.classList.add('active');
+      if (btnTable) btnTable.classList.remove('active');
+      const tableSec = document.getElementById('cb-view-table');
+      const calSec = document.getElementById('cb-view-calendar');
+      if (tableSec) tableSec.style.display = 'none';
+      if (calSec) calSec.style.display = 'block';
+    });
+  }
+}
+
+function updateCentralBankViews() {
+  const todayStr = new Date().toISOString().slice(0, 10);
+  renderCentralBankTable(cachedCbData, todayStr);
+  renderCentralBankCalendar(cachedCbData, todayStr);
+}
+
+// 2A. TABELLEN-ANSICHT (Filtered from system date onwards, grouped by month)
+function renderCentralBankTable(data, todayStr) {
+  const tableContainer = document.getElementById('cb-table-container');
+  if (!tableContainer) return;
+
+  // Filter only selected banks
+  const filteredData = data.filter(d => {
     const matchedCfg = CENTRAL_BANKS_CONFIG.find(cfg => cfg.bankKey === d.bank || cfg.id === d.short || cfg.id === d.bank);
     if (!matchedCfg) return false;
     return DashboardState.selectedBanks.has(matchedCfg.id);
   });
 
-  // 1. Render Mini Cards for Next Meetings of selected banks
-  if (cardGrid) {
-    const selectedBankIds = Array.from(DashboardState.selectedBanks);
-    const nextMeetings = selectedBankIds.map(bankId => {
-      const cfg = CENTRAL_BANKS_CONFIG.find(c => c.id === bankId);
-      if (!cfg) return null;
-      const bankItems = futureData.filter(d => d.bank === cfg.bankKey || d.short === cfg.id);
-      return bankItems.length > 0 ? bankItems[0] : null;
-    }).filter(Boolean);
+  // Filter out past meetings for table view (only future from today onwards)
+  const futureData = filteredData.filter(d => d.datum >= todayStr);
 
-    // Sort next meetings by date
-    nextMeetings.sort((a, b) => a.datum.localeCompare(b.datum));
+  // Sort by date and time ascending
+  futureData.sort((a, b) => {
+    if (a.datum !== b.datum) return a.datum.localeCompare(b.datum);
+    return a.uhrzeit.localeCompare(b.uhrzeit);
+  });
 
-    if (nextMeetings.length === 0) {
-      cardGrid.innerHTML = `<div style="grid-column: 1/-1; padding: 12px; color: var(--text-muted); font-size: 13px;">Keine Zentralbanken ausgewählt.</div>`;
-    } else {
-      cardGrid.innerHTML = nextMeetings.map(item => `
-        <div class="cb-mini-card">
-          <div class="header">
-            <span class="bank-code">${getCountryBadge(item.land_code, item.bank)}</span>
-            <span class="meeting-date">${formatDateDE(item.datum)}</span>
-          </div>
-          <div style="font-size: 11.5px; color: var(--text-dark); margin: 4px 0 8px 0; font-weight: 500;">
-            ${item.typ}
-          </div>
-          <div class="rate-info">
-            <span>Aktuell: <strong class="rate-val">${item.leitzins_aktuell}</strong></span>
-            <span>Erwartet: <strong class="rate-val" style="color: var(--lukb-berry-600);">${item.erwartung}</strong></span>
-          </div>
-        </div>
-      `).join('');
-    }
+  if (futureData.length === 0) {
+    tableContainer.innerHTML = `
+      <div style="text-align: center; padding: 32px; color: var(--text-muted);">
+        Keine anstehenden Zinstermine für die aktuell ausgewählten Zentralbanken vorhanden.
+      </div>`;
+    return;
   }
 
-  // 2. Render Full Schedule Table
-  if (tableContainer) {
-    if (filteredData.length === 0) {
-      tableContainer.innerHTML = `
-        <div style="text-align: center; padding: 32px; color: var(--text-muted);">
-          Keine anstehenden Zinstermine für die aktuell ausgewählten Zentralbanken vorhanden.
-        </div>`;
-      return;
-    }
+  // Calculate counts per month for badges
+  const monthCounts = {};
+  futureData.forEach(item => {
+    const mKey = item.datum.slice(0, 7);
+    monthCounts[mKey] = (monthCounts[mKey] || 0) + 1;
+  });
 
-    // Calculate counts per month for badges
-    const monthCounts = {};
-    filteredData.forEach(item => {
-      const mKey = item.datum.slice(0, 7);
-      monthCounts[mKey] = (monthCounts[mKey] || 0) + 1;
-    });
+  let lastMonthKey = null;
+  let rowsHtml = '';
 
-    let lastMonthKey = null;
-    let rowsHtml = '';
-
-    filteredData.forEach(item => {
-      const currentMonthKey = item.datum.slice(0, 7);
-      if (currentMonthKey !== lastMonthKey) {
-        lastMonthKey = currentMonthKey;
-        const count = monthCounts[currentMonthKey];
-        const countText = count === 1 ? '1 Termin' : `${count} Termine`;
-        rowsHtml += `
-          <tr class="month-group-row">
-            <td colspan="7">
-              <div class="month-group-title">
-                <span>🗓️ ${formatMonthYearDE(item.datum)}</span>
-                <span class="month-badge-count">${countText}</span>
-              </div>
-            </td>
-          </tr>
-        `;
-      }
-
+  futureData.forEach(item => {
+    const currentMonthKey = item.datum.slice(0, 7);
+    if (currentMonthKey !== lastMonthKey) {
+      lastMonthKey = currentMonthKey;
+      const count = monthCounts[currentMonthKey];
+      const countText = count === 1 ? '1 Termin' : `${count} Termine`;
       rowsHtml += `
-        <tr>
-          <td style="font-weight: 700; color: var(--lukb-blue-900); width: 140px;">
-            ${getCountryBadge(item.land_code, item.bank)}
+        <tr class="month-group-row">
+          <td colspan="7">
+            <div class="month-group-title">
+              <span>🗓️ ${formatMonthYearDE(item.datum)}</span>
+              <span class="month-badge-count">${countText}</span>
+            </div>
           </td>
-          <td style="color: var(--text-muted); font-size: 12px;">${item.name}</td>
-          <td style="font-weight: 600; white-space: nowrap; width: 140px;">${formatDateDE(item.datum)}</td>
-          <td style="color: var(--text-muted); font-family: monospace; width: 80px;">${item.uhrzeit}</td>
-          <td>${item.typ}</td>
-          <td class="num" style="font-weight: 600; width: 110px;">${item.leitzins_aktuell}</td>
-          <td class="num" style="font-weight: 700; color: var(--lukb-berry-600); width: 110px;">${item.erwartung}</td>
         </tr>
       `;
-    });
+    }
 
-    tableContainer.innerHTML = `
-      <table class="lukb-table">
-        <thead>
-          <tr>
-            <th style="width: 140px;">Zentralbank</th>
-            <th>Vollständiger Name</th>
-            <th style="width: 140px;">Datum</th>
-            <th style="width: 80px;">Uhrzeit</th>
-            <th>Art des Entscheids / Publikation</th>
-            <th class="num" style="width: 110px;">Leitzins akt.</th>
-            <th class="num" style="width: 110px;">Konsensus</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml}
-        </tbody>
-      </table>
+    rowsHtml += `
+      <tr>
+        <td style="font-weight: 700; color: var(--lukb-blue-900); width: 140px;">
+          ${getCountryBadge(item.land_code, item.bank)}
+        </td>
+        <td style="color: var(--text-muted); font-size: 12px;">${item.name}</td>
+        <td style="font-weight: 600; white-space: nowrap; width: 140px;">${formatDateDE(item.datum)}</td>
+        <td style="color: var(--text-muted); font-family: monospace; width: 80px;">${item.uhrzeit}</td>
+        <td>${item.typ}</td>
+        <td class="num" style="font-weight: 600; width: 110px;">${item.leitzins_aktuell}</td>
+        <td class="num" style="font-weight: 700; color: var(--lukb-berry-600); width: 110px;">${item.erwartung}</td>
+      </tr>
     `;
-  }
+  });
+
+  tableContainer.innerHTML = `
+    <table class="lukb-table">
+      <thead>
+        <tr>
+          <th style="width: 140px;">Zentralbank</th>
+          <th>Vollständiger Name</th>
+          <th style="width: 140px;">Datum</th>
+          <th style="width: 80px;">Uhrzeit</th>
+          <th>Art des Entscheids / Publikation</th>
+          <th class="num" style="width: 110px;">Leitzins akt.</th>
+          <th class="num" style="width: 110px;">Konsensus</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsHtml}
+      </tbody>
+    </table>
+  `;
+}
+
+// 2B. KALENDER-ANSICHT (Quarter grid with 3 months per row, dimming past months and past meetings)
+function renderCentralBankCalendar(data, todayStr) {
+  const container = document.getElementById('cb-calendar-container');
+  if (!container) return;
+
+  const currentMonthKey = todayStr.slice(0, 7); // e.g. "2026-09"
+
+  // Filter only selected banks
+  const filteredData = data.filter(d => {
+    const matchedCfg = CENTRAL_BANKS_CONFIG.find(cfg => cfg.bankKey === d.bank || cfg.id === d.short || cfg.id === d.bank);
+    if (!matchedCfg) return false;
+    return DashboardState.selectedBanks.has(matchedCfg.id);
+  });
+
+  // 4 Quarters for Year 2026
+  const quarters = [
+    { name: 'Q1 2026', months: ['2026-01', '2026-02', '2026-03'] },
+    { name: 'Q2 2026', months: ['2026-04', '2026-05', '2026-06'] },
+    { name: 'Q3 2026', months: ['2026-07', '2026-08', '2026-09'] },
+    { name: 'Q4 2026', months: ['2026-10', '2026-11', '2026-12'] }
+  ];
+
+  const quartersHtml = quarters.map(q => {
+    const monthCardsHtml = q.months.map(mKey => {
+      const isPastMonth = mKey < currentMonthKey;
+      const isCurrentMonth = mKey === currentMonthKey;
+
+      let cardClass = 'cb-month-card';
+      if (isCurrentMonth) cardClass += ' is-current-month';
+      else if (isPastMonth) cardClass += ' is-past-month';
+
+      // Meetings in this month
+      const monthEvents = filteredData.filter(d => d.datum.startsWith(mKey));
+      monthEvents.sort((a, b) => {
+        if (a.datum !== b.datum) return a.datum.localeCompare(b.datum);
+        return a.uhrzeit.localeCompare(b.uhrzeit);
+      });
+
+      let eventsListHtml = '';
+      if (monthEvents.length === 0) {
+        eventsListHtml = `<div class="cb-no-events">Keine Zinsentscheide</div>`;
+      } else {
+        eventsListHtml = monthEvents.map(ev => {
+          const isPastMeeting = isPastMonth || (isCurrentMonth && ev.datum < todayStr);
+          const evClass = isPastMeeting ? 'cb-calendar-event is-past-meeting' : 'cb-calendar-event';
+          return `
+            <div class="${evClass}">
+              <div class="cb-cal-top">
+                <span class="cb-cal-bank">${getCountryBadge(ev.land_code, ev.bank)}</span>
+                <span class="cb-cal-date">${formatDateDE(ev.datum)}</span>
+              </div>
+              <div class="cb-cal-sub">
+                <span>${ev.typ}</span>
+                <span style="font-family: monospace; font-weight: 600;">${ev.uhrzeit}</span>
+              </div>
+              <div class="rate-info" style="margin-top: 3px; font-size: 11px; display: flex; justify-content: space-between;">
+                <span>Aktuell: <strong>${ev.leitzins_aktuell}</strong></span>
+                <span>Erw.: <strong style="color: var(--lukb-berry-600);">${ev.erwartung}</strong></span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const countBadge = monthEvents.length > 0 
+        ? `<span class="month-badge-count">${monthEvents.length === 1 ? '1 Termin' : monthEvents.length + ' Termine'}</span>` 
+        : '';
+
+      return `
+        <div class="${cardClass}">
+          <div class="cb-month-card-header">
+            <span class="cb-month-card-title">${formatMonthYearDE(mKey + '-01')}</span>
+            ${countBadge}
+          </div>
+          <div class="cb-month-card-body">
+            ${eventsListHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="cb-quarter-row">
+        <div class="cb-calendar-grid">
+          ${monthCardsHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = quartersHtml;
 }
 
 // -------------------------------------------------------------

@@ -145,24 +145,13 @@ function renderMacroCalendar(data) {
 }
 
 // -------------------------------------------------------------
-// 2. RENDER ZENTRALBANKEN (System Date Filter, Default Sort, Checkboxes)
+// 2. RENDER ZENTRALBANKEN (Table & Calendar Views, System Date Filter, Checkboxes)
 // -------------------------------------------------------------
+let cachedCbData = [];
+
 function renderCentralBanks(data) {
+  cachedCbData = data || [];
   const checkboxGrid = document.getElementById('cb-checkbox-grid');
-  const cardGrid = document.getElementById('cb-next-meetings');
-  const tableContainer = document.getElementById('cb-table-container');
-
-  // Today ISO date string (e.g. "2026-09-11")
-  const todayStr = new Date().toISOString().slice(0, 10);
-
-  // Filter out past meetings (system date is filter)
-  const futureData = data.filter(d => d.datum >= todayStr);
-
-  // Sort default by date and time ascending
-  futureData.sort((a, b) => {
-    if (a.datum !== b.datum) return a.datum.localeCompare(b.datum);
-    return a.uhrzeit.localeCompare(b.uhrzeit);
-  });
 
   // Render Checkboxes (if not already rendered)
   if (checkboxGrid && checkboxGrid.children.length === 0) {
@@ -188,132 +177,238 @@ function renderCentralBanks(data) {
           DashboardState.selectedBanks.delete(bankId);
           label.classList.remove('is-checked');
         }
-        renderCentralBankCardsAndTable(futureData);
+        updateCentralBankViews();
       });
     });
   }
 
-  renderCentralBankCardsAndTable(futureData);
+  // Setup View Switch Buttons (if not already initialized)
+  initCbViewSwitch();
+
+  // Render both views
+  updateCentralBankViews();
 }
 
-function renderCentralBankCardsAndTable(futureData) {
-  const cardGrid = document.getElementById('cb-next-meetings');
-  const tableContainer = document.getElementById('cb-table-container');
+function initCbViewSwitch() {
+  const btnTable = document.getElementById('cb-view-table-btn');
+  const btnCal = document.getElementById('cb-view-cal-btn');
 
-  // Filter by selected bank checkboxes
-  const filteredData = futureData.filter(d => {
-    // Check if bank matches any selected bank config
+  if (btnTable && !btnTable.dataset.initialized) {
+    btnTable.dataset.initialized = 'true';
+    btnTable.addEventListener('click', () => {
+      DashboardState.cbView = 'table';
+      btnTable.classList.add('active');
+      if (btnCal) btnCal.classList.remove('active');
+      const tableSec = document.getElementById('cb-view-table');
+      const calSec = document.getElementById('cb-view-calendar');
+      if (tableSec) tableSec.style.display = 'block';
+      if (calSec) calSec.style.display = 'none';
+    });
+  }
+
+  if (btnCal && !btnCal.dataset.initialized) {
+    btnCal.dataset.initialized = 'true';
+    btnCal.addEventListener('click', () => {
+      DashboardState.cbView = 'calendar';
+      btnCal.classList.add('active');
+      if (btnTable) btnTable.classList.remove('active');
+      const tableSec = document.getElementById('cb-view-table');
+      const calSec = document.getElementById('cb-view-calendar');
+      if (tableSec) tableSec.style.display = 'none';
+      if (calSec) calSec.style.display = 'block';
+    });
+  }
+}
+
+function updateCentralBankViews() {
+  const todayStr = new Date().toISOString().slice(0, 10);
+  renderCentralBankTable(cachedCbData, todayStr);
+  renderCentralBankCalendar(cachedCbData, todayStr);
+}
+
+// 2A. TABELLEN-ANSICHT (Filtered from system date onwards, grouped by month)
+function renderCentralBankTable(data, todayStr) {
+  const tableContainer = document.getElementById('cb-table-container');
+  if (!tableContainer) return;
+
+  // Filter only selected banks
+  const filteredData = data.filter(d => {
     const matchedCfg = CENTRAL_BANKS_CONFIG.find(cfg => cfg.bankKey === d.bank || cfg.id === d.short || cfg.id === d.bank);
     if (!matchedCfg) return false;
     return DashboardState.selectedBanks.has(matchedCfg.id);
   });
 
-  // 1. Render Mini Cards for Next Meetings of selected banks
-  if (cardGrid) {
-    const selectedBankIds = Array.from(DashboardState.selectedBanks);
-    const nextMeetings = selectedBankIds.map(bankId => {
-      const cfg = CENTRAL_BANKS_CONFIG.find(c => c.id === bankId);
-      if (!cfg) return null;
-      const bankItems = futureData.filter(d => d.bank === cfg.bankKey || d.short === cfg.id);
-      return bankItems.length > 0 ? bankItems[0] : null;
-    }).filter(Boolean);
+  // Filter out past meetings for table view (only future from today onwards)
+  const futureData = filteredData.filter(d => d.datum >= todayStr);
 
-    // Sort next meetings by date
-    nextMeetings.sort((a, b) => a.datum.localeCompare(b.datum));
+  // Sort by date and time ascending
+  futureData.sort((a, b) => {
+    if (a.datum !== b.datum) return a.datum.localeCompare(b.datum);
+    return a.uhrzeit.localeCompare(b.uhrzeit);
+  });
 
-    if (nextMeetings.length === 0) {
-      cardGrid.innerHTML = `<div style="grid-column: 1/-1; padding: 12px; color: var(--text-muted); font-size: 13px;">Keine Zentralbanken ausgewählt.</div>`;
-    } else {
-      cardGrid.innerHTML = nextMeetings.map(item => `
-        <div class="cb-mini-card">
-          <div class="header">
-            <span class="bank-code">${getCountryBadge(item.land_code, item.bank)}</span>
-            <span class="meeting-date">${formatDateDE(item.datum)}</span>
-          </div>
-          <div style="font-size: 11.5px; color: var(--text-dark); margin: 4px 0 8px 0; font-weight: 500;">
-            ${item.typ}
-          </div>
-          <div class="rate-info">
-            <span>Aktuell: <strong class="rate-val">${item.leitzins_aktuell}</strong></span>
-            <span>Erwartet: <strong class="rate-val" style="color: var(--lukb-berry-600);">${item.erwartung}</strong></span>
-          </div>
-        </div>
-      `).join('');
-    }
+  if (futureData.length === 0) {
+    tableContainer.innerHTML = `
+      <div style="text-align: center; padding: 32px; color: var(--text-muted);">
+        Keine anstehenden Zinstermine für die aktuell ausgewählten Zentralbanken vorhanden.
+      </div>`;
+    return;
   }
 
-  // 2. Render Full Schedule Table
-  if (tableContainer) {
-    if (filteredData.length === 0) {
-      tableContainer.innerHTML = `
-        <div style="text-align: center; padding: 32px; color: var(--text-muted);">
-          Keine anstehenden Zinstermine für die aktuell ausgewählten Zentralbanken vorhanden.
-        </div>`;
-      return;
-    }
+  // Calculate counts per month for badges
+  const monthCounts = {};
+  futureData.forEach(item => {
+    const mKey = item.datum.slice(0, 7);
+    monthCounts[mKey] = (monthCounts[mKey] || 0) + 1;
+  });
 
-    // Calculate counts per month for badges
-    const monthCounts = {};
-    filteredData.forEach(item => {
-      const mKey = item.datum.slice(0, 7);
-      monthCounts[mKey] = (monthCounts[mKey] || 0) + 1;
-    });
+  let lastMonthKey = null;
+  let rowsHtml = '';
 
-    let lastMonthKey = null;
-    let rowsHtml = '';
-
-    filteredData.forEach(item => {
-      const currentMonthKey = item.datum.slice(0, 7);
-      if (currentMonthKey !== lastMonthKey) {
-        lastMonthKey = currentMonthKey;
-        const count = monthCounts[currentMonthKey];
-        const countText = count === 1 ? '1 Termin' : `${count} Termine`;
-        rowsHtml += `
-          <tr class="month-group-row">
-            <td colspan="7">
-              <div class="month-group-title">
-                <span>🗓️ ${formatMonthYearDE(item.datum)}</span>
-                <span class="month-badge-count">${countText}</span>
-              </div>
-            </td>
-          </tr>
-        `;
-      }
-
+  futureData.forEach(item => {
+    const currentMonthKey = item.datum.slice(0, 7);
+    if (currentMonthKey !== lastMonthKey) {
+      lastMonthKey = currentMonthKey;
+      const count = monthCounts[currentMonthKey];
+      const countText = count === 1 ? '1 Termin' : `${count} Termine`;
       rowsHtml += `
-        <tr>
-          <td style="font-weight: 700; color: var(--lukb-blue-900); width: 140px;">
-            ${getCountryBadge(item.land_code, item.bank)}
+        <tr class="month-group-row">
+          <td colspan="7">
+            <div class="month-group-title">
+              <span>🗓️ ${formatMonthYearDE(item.datum)}</span>
+              <span class="month-badge-count">${countText}</span>
+            </div>
           </td>
-          <td style="color: var(--text-muted); font-size: 12px;">${item.name}</td>
-          <td style="font-weight: 600; white-space: nowrap; width: 140px;">${formatDateDE(item.datum)}</td>
-          <td style="color: var(--text-muted); font-family: monospace; width: 80px;">${item.uhrzeit}</td>
-          <td>${item.typ}</td>
-          <td class="num" style="font-weight: 600; width: 110px;">${item.leitzins_aktuell}</td>
-          <td class="num" style="font-weight: 700; color: var(--lukb-berry-600); width: 110px;">${item.erwartung}</td>
         </tr>
       `;
-    });
+    }
 
-    tableContainer.innerHTML = `
-      <table class="lukb-table">
-        <thead>
-          <tr>
-            <th style="width: 140px;">Zentralbank</th>
-            <th>Vollständiger Name</th>
-            <th style="width: 140px;">Datum</th>
-            <th style="width: 80px;">Uhrzeit</th>
-            <th>Art des Entscheids / Publikation</th>
-            <th class="num" style="width: 110px;">Leitzins akt.</th>
-            <th class="num" style="width: 110px;">Konsensus</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml}
-        </tbody>
-      </table>
+    rowsHtml += `
+      <tr>
+        <td style="font-weight: 700; color: var(--lukb-blue-900); width: 140px;">
+          ${getCountryBadge(item.land_code, item.bank)}
+        </td>
+        <td style="color: var(--text-muted); font-size: 12px;">${item.name}</td>
+        <td style="font-weight: 600; white-space: nowrap; width: 140px;">${formatDateDE(item.datum)}</td>
+        <td style="color: var(--text-muted); font-family: monospace; width: 80px;">${item.uhrzeit}</td>
+        <td>${item.typ}</td>
+        <td class="num" style="font-weight: 600; width: 110px;">${item.leitzins_aktuell}</td>
+        <td class="num" style="font-weight: 700; color: var(--lukb-berry-600); width: 110px;">${item.erwartung}</td>
+      </tr>
     `;
-  }
+  });
+
+  tableContainer.innerHTML = `
+    <table class="lukb-table">
+      <thead>
+        <tr>
+          <th style="width: 140px;">Zentralbank</th>
+          <th>Vollständiger Name</th>
+          <th style="width: 140px;">Datum</th>
+          <th style="width: 80px;">Uhrzeit</th>
+          <th>Art des Entscheids / Publikation</th>
+          <th class="num" style="width: 110px;">Leitzins akt.</th>
+          <th class="num" style="width: 110px;">Konsensus</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsHtml}
+      </tbody>
+    </table>
+  `;
+}
+
+// 2B. KALENDER-ANSICHT (Quarter grid with 3 months per row, dimming past months and past meetings)
+function renderCentralBankCalendar(data, todayStr) {
+  const container = document.getElementById('cb-calendar-container');
+  if (!container) return;
+
+  const currentMonthKey = todayStr.slice(0, 7); // e.g. "2026-09"
+
+  // Filter only selected banks
+  const filteredData = data.filter(d => {
+    const matchedCfg = CENTRAL_BANKS_CONFIG.find(cfg => cfg.bankKey === d.bank || cfg.id === d.short || cfg.id === d.bank);
+    if (!matchedCfg) return false;
+    return DashboardState.selectedBanks.has(matchedCfg.id);
+  });
+
+  // 4 Quarters for Year 2026
+  const quarters = [
+    { name: 'Q1 2026', months: ['2026-01', '2026-02', '2026-03'] },
+    { name: 'Q2 2026', months: ['2026-04', '2026-05', '2026-06'] },
+    { name: 'Q3 2026', months: ['2026-07', '2026-08', '2026-09'] },
+    { name: 'Q4 2026', months: ['2026-10', '2026-11', '2026-12'] }
+  ];
+
+  const quartersHtml = quarters.map(q => {
+    const monthCardsHtml = q.months.map(mKey => {
+      const isPastMonth = mKey < currentMonthKey;
+      const isCurrentMonth = mKey === currentMonthKey;
+
+      let cardClass = 'cb-month-card';
+      if (isCurrentMonth) cardClass += ' is-current-month';
+      else if (isPastMonth) cardClass += ' is-past-month';
+
+      // Meetings in this month
+      const monthEvents = filteredData.filter(d => d.datum.startsWith(mKey));
+      monthEvents.sort((a, b) => {
+        if (a.datum !== b.datum) return a.datum.localeCompare(b.datum);
+        return a.uhrzeit.localeCompare(b.uhrzeit);
+      });
+
+      let eventsListHtml = '';
+      if (monthEvents.length === 0) {
+        eventsListHtml = `<div class="cb-no-events">Keine Zinsentscheide</div>`;
+      } else {
+        eventsListHtml = monthEvents.map(ev => {
+          const isPastMeeting = isPastMonth || (isCurrentMonth && ev.datum < todayStr);
+          const evClass = isPastMeeting ? 'cb-calendar-event is-past-meeting' : 'cb-calendar-event';
+          return `
+            <div class="${evClass}">
+              <div class="cb-cal-top">
+                <span class="cb-cal-bank">${getCountryBadge(ev.land_code, ev.bank)}</span>
+                <span class="cb-cal-date">${formatDateDE(ev.datum)}</span>
+              </div>
+              <div class="cb-cal-sub">
+                <span>${ev.typ}</span>
+                <span style="font-family: monospace; font-weight: 600;">${ev.uhrzeit}</span>
+              </div>
+              <div class="rate-info" style="margin-top: 3px; font-size: 11px; display: flex; justify-content: space-between;">
+                <span>Aktuell: <strong>${ev.leitzins_aktuell}</strong></span>
+                <span>Erw.: <strong style="color: var(--lukb-berry-600);">${ev.erwartung}</strong></span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const countBadge = monthEvents.length > 0 
+        ? `<span class="month-badge-count">${monthEvents.length === 1 ? '1 Termin' : monthEvents.length + ' Termine'}</span>` 
+        : '';
+
+      return `
+        <div class="${cardClass}">
+          <div class="cb-month-card-header">
+            <span class="cb-month-card-title">${formatMonthYearDE(mKey + '-01')}</span>
+            ${countBadge}
+          </div>
+          <div class="cb-month-card-body">
+            ${eventsListHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="cb-quarter-row">
+        <div class="cb-calendar-grid">
+          ${monthCardsHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = quartersHtml;
 }
 
 // -------------------------------------------------------------

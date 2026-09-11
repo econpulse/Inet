@@ -332,12 +332,16 @@ function renderCentralBankCalendar(data, todayStr) {
     return DashboardState.selectedBanks.has(matchedCfg.id);
   });
 
-  // Quarters definition (Filter out quarters that lie completely in the past)
+  // Quarters definition for 2026 and 2027 (Filter out quarters that lie completely in the past)
   const allQuarters = [
     { name: 'Q1 2026', months: ['2026-01', '2026-02', '2026-03'] },
     { name: 'Q2 2026', months: ['2026-04', '2026-05', '2026-06'] },
     { name: 'Q3 2026', months: ['2026-07', '2026-08', '2026-09'] },
-    { name: 'Q4 2026', months: ['2026-10', '2026-11', '2026-12'] }
+    { name: 'Q4 2026', months: ['2026-10', '2026-11', '2026-12'] },
+    { name: 'Q1 2027', months: ['2027-01', '2027-02', '2027-03'] },
+    { name: 'Q2 2027', months: ['2027-04', '2027-05', '2027-06'] },
+    { name: 'Q3 2027', months: ['2027-07', '2027-08', '2027-09'] },
+    { name: 'Q4 2027', months: ['2027-10', '2027-11', '2027-12'] }
   ];
 
   // A quarter is completely in the past if its last month is strictly before currentMonthKey

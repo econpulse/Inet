@@ -418,31 +418,36 @@ function renderCentralBanks(rawData) {
 function initCbViewSwitch() {
   const btnTable = document.getElementById('cb-view-table-btn');
   const btnCal = document.getElementById('cb-view-cal-btn');
+  const btnTimeline = document.getElementById('cb-view-timeline-btn');
+
+  const tableSec = document.getElementById('cb-view-table');
+  const calSec = document.getElementById('cb-view-calendar');
+  const timelineSec = document.getElementById('cb-view-timeline');
+
+  const setView = (viewName) => {
+    DashboardState.cbView = viewName;
+    if (btnTable) btnTable.classList.toggle('active', viewName === 'table');
+    if (btnCal) btnCal.classList.toggle('active', viewName === 'calendar');
+    if (btnTimeline) btnTimeline.classList.toggle('active', viewName === 'timeline');
+
+    if (tableSec) tableSec.style.display = viewName === 'table' ? 'block' : 'none';
+    if (calSec) calSec.style.display = viewName === 'calendar' ? 'block' : 'none';
+    if (timelineSec) timelineSec.style.display = viewName === 'timeline' ? 'block' : 'none';
+  };
 
   if (btnTable && !btnTable.dataset.initialized) {
     btnTable.dataset.initialized = 'true';
-    btnTable.addEventListener('click', () => {
-      DashboardState.cbView = 'table';
-      btnTable.classList.add('active');
-      if (btnCal) btnCal.classList.remove('active');
-      const tableSec = document.getElementById('cb-view-table');
-      const calSec = document.getElementById('cb-view-calendar');
-      if (tableSec) tableSec.style.display = 'block';
-      if (calSec) calSec.style.display = 'none';
-    });
+    btnTable.addEventListener('click', () => setView('table'));
   }
 
   if (btnCal && !btnCal.dataset.initialized) {
     btnCal.dataset.initialized = 'true';
-    btnCal.addEventListener('click', () => {
-      DashboardState.cbView = 'calendar';
-      btnCal.classList.add('active');
-      if (btnTable) btnTable.classList.remove('active');
-      const tableSec = document.getElementById('cb-view-table');
-      const calSec = document.getElementById('cb-view-calendar');
-      if (tableSec) tableSec.style.display = 'none';
-      if (calSec) calSec.style.display = 'block';
-    });
+    btnCal.addEventListener('click', () => setView('calendar'));
+  }
+
+  if (btnTimeline && !btnTimeline.dataset.initialized) {
+    btnTimeline.dataset.initialized = 'true';
+    btnTimeline.addEventListener('click', () => setView('timeline'));
   }
 }
 
@@ -450,6 +455,7 @@ function updateCentralBankViews() {
   const todayStr = new Date().toISOString().slice(0, 10);
   renderCentralBankTable(cachedCbEvents, todayStr);
   renderCentralBankCalendar(cachedCbEvents, todayStr);
+  renderCentralBankTimeline(cachedCbEvents, todayStr);
 }
 
 // 2A. TABELLEN-ANSICHT
@@ -623,6 +629,188 @@ function renderCentralBankCalendar(events, todayStr) {
   }).join('');
 
   container.innerHTML = quartersHtml;
+}
+
+// 2C. ZEITSTRAHL-ANSICHT (Timeline variant: proportional month widths, past 30 days highlighted)
+function renderCentralBankTimeline(events, todayStr) {
+  const container = document.getElementById('cb-timeline-container');
+  if (!container) return;
+
+  const filtered = events.filter(d => DashboardState.selectedBanks.has(d.bank));
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 32px; color: var(--text-muted);">
+        Keine Zentralbanken ausgewählt. Bitte oben gewünschte Notenbanken aktivieren.
+      </div>`;
+    return;
+  }
+
+  // 1. Calculate Timeline Range:
+  // Today - 30 days
+  const today = new Date(todayStr + 'T00:00:00');
+  const past30 = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+  
+  // Start from the 1st of the month of (today - 30 days)
+  const startYear = past30.getFullYear();
+  const startMonth = past30.getMonth(); // 0-11
+  const startDate = new Date(startYear, startMonth, 1);
+
+  // End at 2027-12-31
+  const endYear = 2027;
+  const endMonth = 11;
+  const endDate = new Date(endYear, 11, 31);
+
+  // Build list of months with exact day counts
+  const months = [];
+  let curY = startYear;
+  let curM = startMonth;
+  while (curY < endYear || (curY === endYear && curM <= endMonth)) {
+    const daysInM = new Date(curY, curM + 1, 0).getDate();
+    const monthKey = `${curY}-${String(curM + 1).padStart(2, '0')}`;
+    const monthName = formatMonthYearDE(`${monthKey}-01`);
+    const shortName = `${monthName.slice(0, 3)} '${String(curY).slice(2)}`;
+    months.push({
+      year: curY,
+      month: curM,
+      days: daysInM,
+      key: monthKey,
+      label: shortName,
+      fullLabel: monthName
+    });
+    curM++;
+    if (curM > 11) {
+      curM = 0;
+      curY++;
+    }
+  }
+
+  const totalDays = months.reduce((acc, m) => acc + m.days, 0);
+  const pxPerDay = 3.2; // Proportional width factor (30 days ~ 96px, 31 days ~ 99px, 28 days ~ 90px)
+  const totalWidthPx = Math.round(totalDays * pxPerDay);
+
+  // Calculate Today X position
+  const daysFromStartToToday = (today - startDate) / (1000 * 60 * 60 * 24);
+  const todayX = Math.round(daysFromStartToToday * pxPerDay);
+
+  const currentMonthKey = todayStr.slice(0, 7);
+
+  // Month header columns
+  const headerMonthsHtml = months.map(m => {
+    const w = Math.round(m.days * pxPerDay);
+    const isPast = m.key < currentMonthKey;
+    const isCurrent = m.key === currentMonthKey;
+    let cls = 'cb-timeline-month-col';
+    if (isCurrent) cls += ' is-current';
+    else if (isPast) cls += ' is-past';
+
+    return `<div class="${cls}" style="width: ${w}px; min-width: ${w}px;" title="${m.fullLabel}">${m.label}</div>`;
+  }).join('');
+
+  // Background month columns for lanes
+  const laneBgMonthsHtml = months.map(m => {
+    const w = Math.round(m.days * pxPerDay);
+    const isPast = m.key < currentMonthKey;
+    let cls = 'cb-timeline-lane-month-bg';
+    if (isPast) cls += ' is-past';
+    return `<div class="${cls}" style="width: ${w}px; min-width: ${w}px;"></div>`;
+  }).join('');
+
+  // Selected central banks in order
+  const activeBankConfigs = CENTRAL_BANKS_CONFIG.filter(cfg => DashboardState.selectedBanks.has(cfg.id));
+
+  // Determine next upcoming meeting for special visual accent
+  const futureSorted = filtered.filter(d => d.datum >= todayStr).sort((a, b) => a.datum.localeCompare(b.datum));
+  const nextMeetingKey = futureSorted.length > 0 ? `${futureSorted[0].bank}_${futureSorted[0].datum}` : '';
+
+  // Rows for each central bank
+  const rowsHtml = activeBankConfigs.map(cfg => {
+    const bankEvents = filtered.filter(d => d.bank === cfg.id);
+
+    const nodesHtml = bankEvents.map(ev => {
+      const evDate = new Date(ev.datum + 'T00:00:00');
+      if (evDate < startDate || evDate > endDate) return '';
+
+      const daysDiff = (evDate - startDate) / (1000 * 60 * 60 * 24);
+      const leftPx = Math.round(daysDiff * pxPerDay);
+      const isPast = ev.datum < todayStr;
+      const isNext = `${ev.bank}_${ev.datum}` === nextMeetingKey;
+
+      let nodeCls = 'cb-timeline-node';
+      if (isPast) nodeCls += ' is-past-node';
+      else if (isNext) nodeCls += ' is-next-meeting';
+
+      const dayOfMonth = ev.datum.split('-')[2];
+
+      const relativeCountdown = !isPast ? getRelativeTimeBadge(ev.datum, todayStr).replace(/<[^>]*>/g, '') : 'Bereits stattgefunden';
+
+      return `
+        <div class="${nodeCls}" style="left: ${leftPx}px;">
+          <span>${dayOfMonth}.</span>
+          <div class="cb-timeline-tooltip">
+            <strong style="color: #FFFFFF;">${ev.bank}</strong> (${cfg.name})<br/>
+            <span>🗓️ ${formatDateDE(ev.datum)}</span>
+            <br/><span style="color: ${isPast ? '#94A3B8' : '#FDF2F7'}; font-weight: 700;">${relativeCountdown}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="cb-timeline-row">
+        <div class="cb-timeline-bank-label">
+          ${getCountryBadge(cfg.code, cfg.id)}
+        </div>
+        <div class="cb-timeline-lane" style="width: ${totalWidthPx}px; min-width: ${totalWidthPx}px;">
+          <div class="cb-timeline-lane-bg">${laneBgMonthsHtml}</div>
+          <div class="cb-timeline-guide-line"></div>
+          ${nodesHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="cb-timeline-legend" style="display: flex; gap: 16px; align-items: center; margin-bottom: 12px; font-size: 12px; color: var(--text-dark); flex-wrap: wrap;">
+      <span style="display: inline-flex; align-items: center; gap: 6px;">
+        <span style="width: 12px; height: 12px; background-color: var(--lukb-berry-600); display: inline-block;"></span>
+        <strong>Nächster Zinsentscheid</strong>
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 6px;">
+        <span style="width: 12px; height: 12px; background-color: var(--lukb-blue-700); display: inline-block;"></span>
+        <span>Anstehende Entscheide</span>
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 6px;">
+        <span style="width: 12px; height: 12px; background-color: #94A3B8; opacity: 0.65; display: inline-block;"></span>
+        <span>Vergangene Entscheide (letzte 30 Tage)</span>
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 6px;">
+        <span style="width: 12px; height: 2px; background-color: var(--lukb-berry-600); display: inline-block;"></span>
+        <span>Heute-Linie</span>
+      </span>
+      <span style="margin-left: auto; color: var(--text-muted); font-size: 11.5px;">
+        ↔️ Horizontal scrollbar
+      </span>
+    </div>
+
+    <div class="cb-timeline-wrapper" id="cb-timeline-scroll-wrapper">
+      <div class="cb-timeline-inner" style="width: calc(160px + ${totalWidthPx}px);">
+        <div class="cb-timeline-header-row">
+          <div class="cb-timeline-corner">Zentralbank</div>
+          <div class="cb-timeline-months-container" style="width: ${totalWidthPx}px; min-width: ${totalWidthPx}px;">
+            ${headerMonthsHtml}
+            <div class="cb-timeline-today-line" style="left: ${todayX}px;">
+              <span class="cb-timeline-today-flag">Heute</span>
+            </div>
+          </div>
+        </div>
+        <div style="position: relative;">
+          ${rowsHtml}
+          <div class="cb-timeline-today-line" style="left: calc(160px + ${todayX}px); top: 0; bottom: 0;"></div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 // -------------------------------------------------------------

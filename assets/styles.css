@@ -655,6 +655,247 @@ html, body {
   padding: 24px 0;
 }
 
+/* =============================================================
+   CENTRAL BANK TIMELINE / ZEITSTRAHL VARIANT
+   ============================================================= */
+.cb-timeline-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border-dark);
+  background-color: var(--bg-white);
+  position: relative;
+}
+
+.cb-timeline-inner {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Timeline Header */
+.cb-timeline-header-row {
+  display: flex;
+  background-color: var(--lukb-blue-50);
+  border-bottom: 2px solid var(--lukb-blue-300);
+  position: sticky;
+  top: 0;
+  z-index: 9;
+}
+
+.cb-timeline-corner {
+  width: 160px;
+  min-width: 160px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--lukb-blue-900);
+  background-color: var(--lukb-blue-50);
+  border-right: 2px solid var(--lukb-blue-300);
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.cb-timeline-months-container {
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+}
+
+.cb-timeline-month-col {
+  border-right: 1px solid var(--lukb-blue-200);
+  text-align: center;
+  padding: 8px 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--lukb-blue-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+.cb-timeline-month-col.is-past {
+  background-color: rgba(241, 245, 249, 0.7);
+  color: var(--text-muted);
+}
+
+.cb-timeline-month-col.is-current {
+  background-color: var(--lukb-blue-100);
+  color: var(--lukb-blue-900);
+  border-bottom: 2px solid var(--lukb-berry-600);
+}
+
+/* Timeline Rows / Lanes */
+.cb-timeline-row {
+  display: flex;
+  border-bottom: 1px solid var(--border-light);
+  min-height: 50px;
+  position: relative;
+  transition: background-color 0.15s ease;
+}
+
+.cb-timeline-row:hover {
+  background-color: #F8FAFD;
+}
+
+.cb-timeline-bank-label {
+  width: 160px;
+  min-width: 160px;
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--lukb-blue-900);
+  background-color: var(--bg-white);
+  border-right: 2px solid var(--lukb-blue-300);
+  position: sticky;
+  left: 0;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.02);
+}
+
+.cb-timeline-row:hover .cb-timeline-bank-label {
+  background-color: #F8FAFD;
+}
+
+.cb-timeline-lane {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* Month background columns in lane */
+.cb-timeline-lane-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  pointer-events: none;
+}
+
+.cb-timeline-lane-month-bg {
+  border-right: 1px dashed #E2E8F0;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.cb-timeline-lane-month-bg.is-past {
+  background-color: rgba(241, 245, 249, 0.45);
+}
+
+/* Center guide line across track */
+.cb-timeline-guide-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #E2E8F0;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Today indicator line across entire timeline */
+.cb-timeline-today-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--lukb-berry-600);
+  z-index: 6;
+  pointer-events: none;
+}
+
+.cb-timeline-today-flag {
+  position: absolute;
+  top: 2px;
+  left: -20px;
+  background-color: var(--lukb-berry-600);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Timeline Meeting Node / Marker */
+.cb-timeline-node {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 7;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--lukb-blue-700);
+  color: #FFFFFF;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 1px 4px rgba(0, 59, 109, 0.25);
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.cb-timeline-node:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  background-color: var(--lukb-berry-600);
+  box-shadow: 0 2px 8px rgba(179, 31, 89, 0.35);
+  z-index: 12;
+}
+
+.cb-timeline-node.is-past-node {
+  background-color: #94A3B8;
+  color: #F8FAFC;
+  opacity: 0.65;
+  font-weight: 600;
+  font-size: 10px;
+  padding: 1px 5px;
+}
+
+.cb-timeline-node.is-next-meeting {
+  background-color: var(--lukb-berry-600);
+  border-color: #FDF2F7;
+  box-shadow: 0 0 0 2px var(--lukb-berry-400), 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Tooltip on node hover */
+.cb-timeline-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--lukb-blue-900);
+  color: #FFFFFF;
+  padding: 6px 10px;
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-left: 3px solid var(--lukb-berry-500);
+}
+
+.cb-timeline-node:hover .cb-timeline-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Forecast Table Visual Indicators (Left aligned: Bar on left, number on right) */
 .metric-bar-container {
   display: inline-flex;

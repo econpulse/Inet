@@ -592,6 +592,220 @@ margin: auto 0;
 padding: 24px 0;
 }
 
+.cb-timeline-wrapper {
+overflow-x: auto;
+border: 1px solid var(--border-dark);
+background-color: var(--bg-white);
+position: relative;
+}
+.cb-timeline-inner {
+display: flex;
+flex-direction: column;
+position: relative;
+}
+
+.cb-timeline-header-row {
+display: flex;
+background-color: var(--lukb-blue-50);
+border-bottom: 2px solid var(--lukb-blue-300);
+position: sticky;
+top: 0;
+z-index: 9;
+}
+.cb-timeline-corner {
+width: 160px;
+min-width: 160px;
+padding: 10px 14px;
+font-weight: 700;
+font-size: 12px;
+color: var(--lukb-blue-900);
+background-color: var(--lukb-blue-50);
+border-right: 2px solid var(--lukb-blue-300);
+position: sticky;
+left: 0;
+z-index: 10;
+display: flex;
+align-items: center;
+text-transform: uppercase;
+letter-spacing: 0.03em;
+}
+.cb-timeline-months-container {
+display: flex;
+flex-grow: 1;
+position: relative;
+}
+.cb-timeline-month-col {
+border-right: 1px solid var(--lukb-blue-200);
+text-align: center;
+padding: 8px 4px;
+font-size: 11.5px;
+font-weight: 700;
+color: var(--lukb-blue-900);
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+box-sizing: border-box;
+}
+.cb-timeline-month-col.is-past {
+background-color: rgba(241, 245, 249, 0.7);
+color: var(--text-muted);
+}
+.cb-timeline-month-col.is-current {
+background-color: var(--lukb-blue-100);
+color: var(--lukb-blue-900);
+border-bottom: 2px solid var(--lukb-berry-600);
+}
+
+.cb-timeline-row {
+display: flex;
+border-bottom: 1px solid var(--border-light);
+min-height: 50px;
+position: relative;
+transition: background-color 0.15s ease;
+}
+.cb-timeline-row:hover {
+background-color: #F8FAFD;
+}
+.cb-timeline-bank-label {
+width: 160px;
+min-width: 160px;
+padding: 8px 14px;
+font-weight: 700;
+font-size: 13px;
+color: var(--lukb-blue-900);
+background-color: var(--bg-white);
+border-right: 2px solid var(--lukb-blue-300);
+position: sticky;
+left: 0;
+z-index: 8;
+display: flex;
+align-items: center;
+box-shadow: 2px 0 4px rgba(0, 0, 0, 0.02);
+}
+.cb-timeline-row:hover .cb-timeline-bank-label {
+background-color: #F8FAFD;
+}
+.cb-timeline-lane {
+position: relative;
+flex-grow: 1;
+display: flex;
+align-items: center;
+}
+
+.cb-timeline-lane-bg {
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+display: flex;
+pointer-events: none;
+}
+.cb-timeline-lane-month-bg {
+border-right: 1px dashed #E2E8F0;
+height: 100%;
+box-sizing: border-box;
+}
+.cb-timeline-lane-month-bg.is-past {
+background-color: rgba(241, 245, 249, 0.45);
+}
+
+.cb-timeline-guide-line {
+position: absolute;
+left: 0;
+right: 0;
+height: 2px;
+background-color: #E2E8F0;
+top: 50%;
+transform: translateY(-50%);
+pointer-events: none;
+}
+
+.cb-timeline-today-line {
+position: absolute;
+top: 0;
+bottom: 0;
+width: 2px;
+background-color: var(--lukb-berry-600);
+z-index: 6;
+pointer-events: none;
+}
+.cb-timeline-today-flag {
+position: absolute;
+top: 2px;
+left: -20px;
+background-color: var(--lukb-berry-600);
+color: #fff;
+font-size: 9.5px;
+font-weight: 700;
+padding: 1px 5px;
+text-transform: uppercase;
+white-space: nowrap;
+}
+
+.cb-timeline-node {
+position: absolute;
+top: 50%;
+transform: translate(-50%, -50%);
+z-index: 7;
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+background-color: var(--lukb-blue-700);
+color: #FFFFFF;
+border: 2px solid #FFFFFF;
+box-shadow: 0 1px 4px rgba(0, 59, 109, 0.25);
+padding: 2px 6px;
+font-size: 11px;
+font-weight: 700;
+transition: all 0.15s ease;
+white-space: nowrap;
+}
+.cb-timeline-node:hover {
+transform: translate(-50%, -50%) scale(1.15);
+background-color: var(--lukb-berry-600);
+box-shadow: 0 2px 8px rgba(179, 31, 89, 0.35);
+z-index: 12;
+}
+.cb-timeline-node.is-past-node {
+background-color: #94A3B8;
+color: #F8FAFC;
+opacity: 0.65;
+font-weight: 600;
+font-size: 10px;
+padding: 1px 5px;
+}
+.cb-timeline-node.is-next-meeting {
+background-color: var(--lukb-berry-600);
+border-color: #FDF2F7;
+box-shadow: 0 0 0 2px var(--lukb-berry-400), 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.cb-timeline-tooltip {
+position: absolute;
+bottom: calc(100% + 6px);
+left: 50%;
+transform: translateX(-50%);
+background-color: var(--lukb-blue-900);
+color: #FFFFFF;
+padding: 6px 10px;
+font-size: 11.5px;
+font-weight: 500;
+white-space: nowrap;
+pointer-events: none;
+opacity: 0;
+visibility: hidden;
+transition: opacity 0.15s ease;
+z-index: 20;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+border-left: 3px solid var(--lukb-berry-500);
+}
+.cb-timeline-node:hover .cb-timeline-tooltip {
+opacity: 1;
+visibility: visible;
+}
+
 .metric-bar-container {
 display: inline-flex;
 align-items: center;
@@ -738,7 +952,7 @@ flex-direction: column;
       </div>
     </div>
 
-    <!-- View Switcher Bar (Tabellen-Ansicht vs Kalender-Ansicht) -->
+    <!-- View Switcher Bar (Tabellen-Ansicht vs Kalender-Ansicht vs Zeitstrahl-Ansicht) -->
     <div class="cb-view-switch-bar">
       <div class="cb-view-switch-group">
         <button type="button" id="cb-view-table-btn" class="cb-view-switch-btn active" data-view="table">
@@ -749,9 +963,13 @@ flex-direction: column;
           <svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="0" ry="0" /><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
           Kalender-Ansicht
         </button>
+        <button type="button" id="cb-view-timeline-btn" class="cb-view-switch-btn" data-view="timeline">
+          <svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="2" y1="12" x2="22" y2="12"></line><circle cx="6" cy="12" r="2.5" fill="currentColor"></circle><circle cx="12" cy="12" r="2.5" fill="currentColor"></circle><circle cx="18" cy="12" r="2.5" fill="currentColor"></circle></svg>
+          Zeitstrahl-Ansicht
+        </button>
       </div>
       <div class="cb-view-switch-hint">
-        <span>Gitter-Darstellung nach Quartalen (3 Monate pro Zeile)</span>
+        <span>Horizontale Timeline mit proportionalen Monatsabständen (heute - 30 Tage bis Ende 2027)</span>
       </div>
     </div>
 
@@ -763,6 +981,11 @@ flex-direction: column;
     <!-- Calendar View Container -->
     <div id="cb-view-calendar" class="lukb-card-body" style="display: none; padding: 20px;">
       <div id="cb-calendar-container"></div>
+    </div>
+
+    <!-- Timeline View Container -->
+    <div id="cb-view-timeline" class="lukb-card-body" style="display: none; padding: 20px;">
+      <div id="cb-timeline-container"></div>
     </div>
 
     <div class="lukb-footer-note">
@@ -1208,31 +1431,36 @@ function renderCentralBanks(rawData) {
 function initCbViewSwitch() {
   const btnTable = document.getElementById('cb-view-table-btn');
   const btnCal = document.getElementById('cb-view-cal-btn');
+  const btnTimeline = document.getElementById('cb-view-timeline-btn');
+
+  const tableSec = document.getElementById('cb-view-table');
+  const calSec = document.getElementById('cb-view-calendar');
+  const timelineSec = document.getElementById('cb-view-timeline');
+
+  const setView = (viewName) => {
+    DashboardState.cbView = viewName;
+    if (btnTable) btnTable.classList.toggle('active', viewName === 'table');
+    if (btnCal) btnCal.classList.toggle('active', viewName === 'calendar');
+    if (btnTimeline) btnTimeline.classList.toggle('active', viewName === 'timeline');
+
+    if (tableSec) tableSec.style.display = viewName === 'table' ? 'block' : 'none';
+    if (calSec) calSec.style.display = viewName === 'calendar' ? 'block' : 'none';
+    if (timelineSec) timelineSec.style.display = viewName === 'timeline' ? 'block' : 'none';
+  };
 
   if (btnTable && !btnTable.dataset.initialized) {
     btnTable.dataset.initialized = 'true';
-    btnTable.addEventListener('click', () => {
-      DashboardState.cbView = 'table';
-      btnTable.classList.add('active');
-      if (btnCal) btnCal.classList.remove('active');
-      const tableSec = document.getElementById('cb-view-table');
-      const calSec = document.getElementById('cb-view-calendar');
-      if (tableSec) tableSec.style.display = 'block';
-      if (calSec) calSec.style.display = 'none';
-    });
+    btnTable.addEventListener('click', () => setView('table'));
   }
 
   if (btnCal && !btnCal.dataset.initialized) {
     btnCal.dataset.initialized = 'true';
-    btnCal.addEventListener('click', () => {
-      DashboardState.cbView = 'calendar';
-      btnCal.classList.add('active');
-      if (btnTable) btnTable.classList.remove('active');
-      const tableSec = document.getElementById('cb-view-table');
-      const calSec = document.getElementById('cb-view-calendar');
-      if (tableSec) tableSec.style.display = 'none';
-      if (calSec) calSec.style.display = 'block';
-    });
+    btnCal.addEventListener('click', () => setView('calendar'));
+  }
+
+  if (btnTimeline && !btnTimeline.dataset.initialized) {
+    btnTimeline.dataset.initialized = 'true';
+    btnTimeline.addEventListener('click', () => setView('timeline'));
   }
 }
 
@@ -1240,6 +1468,7 @@ function updateCentralBankViews() {
   const todayStr = new Date().toISOString().slice(0, 10);
   renderCentralBankTable(cachedCbEvents, todayStr);
   renderCentralBankCalendar(cachedCbEvents, todayStr);
+  renderCentralBankTimeline(cachedCbEvents, todayStr);
 }
 
 // 2A. TABELLEN-ANSICHT
@@ -1413,6 +1642,188 @@ function renderCentralBankCalendar(events, todayStr) {
   }).join('');
 
   container.innerHTML = quartersHtml;
+}
+
+// 2C. ZEITSTRAHL-ANSICHT (Timeline variant: proportional month widths, past 30 days highlighted)
+function renderCentralBankTimeline(events, todayStr) {
+  const container = document.getElementById('cb-timeline-container');
+  if (!container) return;
+
+  const filtered = events.filter(d => DashboardState.selectedBanks.has(d.bank));
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 32px; color: var(--text-muted);">
+        Keine Zentralbanken ausgewählt. Bitte oben gewünschte Notenbanken aktivieren.
+      </div>`;
+    return;
+  }
+
+  // 1. Calculate Timeline Range:
+  // Today - 30 days
+  const today = new Date(todayStr + 'T00:00:00');
+  const past30 = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+  
+  // Start from the 1st of the month of (today - 30 days)
+  const startYear = past30.getFullYear();
+  const startMonth = past30.getMonth(); // 0-11
+  const startDate = new Date(startYear, startMonth, 1);
+
+  // End at 2027-12-31
+  const endYear = 2027;
+  const endMonth = 11;
+  const endDate = new Date(endYear, 11, 31);
+
+  // Build list of months with exact day counts
+  const months = [];
+  let curY = startYear;
+  let curM = startMonth;
+  while (curY < endYear || (curY === endYear && curM <= endMonth)) {
+    const daysInM = new Date(curY, curM + 1, 0).getDate();
+    const monthKey = `${curY}-${String(curM + 1).padStart(2, '0')}`;
+    const monthName = formatMonthYearDE(`${monthKey}-01`);
+    const shortName = `${monthName.slice(0, 3)} '${String(curY).slice(2)}`;
+    months.push({
+      year: curY,
+      month: curM,
+      days: daysInM,
+      key: monthKey,
+      label: shortName,
+      fullLabel: monthName
+    });
+    curM++;
+    if (curM > 11) {
+      curM = 0;
+      curY++;
+    }
+  }
+
+  const totalDays = months.reduce((acc, m) => acc + m.days, 0);
+  const pxPerDay = 3.2; // Proportional width factor (30 days ~ 96px, 31 days ~ 99px, 28 days ~ 90px)
+  const totalWidthPx = Math.round(totalDays * pxPerDay);
+
+  // Calculate Today X position
+  const daysFromStartToToday = (today - startDate) / (1000 * 60 * 60 * 24);
+  const todayX = Math.round(daysFromStartToToday * pxPerDay);
+
+  const currentMonthKey = todayStr.slice(0, 7);
+
+  // Month header columns
+  const headerMonthsHtml = months.map(m => {
+    const w = Math.round(m.days * pxPerDay);
+    const isPast = m.key < currentMonthKey;
+    const isCurrent = m.key === currentMonthKey;
+    let cls = 'cb-timeline-month-col';
+    if (isCurrent) cls += ' is-current';
+    else if (isPast) cls += ' is-past';
+
+    return `<div class="${cls}" style="width: ${w}px; min-width: ${w}px;" title="${m.fullLabel}">${m.label}</div>`;
+  }).join('');
+
+  // Background month columns for lanes
+  const laneBgMonthsHtml = months.map(m => {
+    const w = Math.round(m.days * pxPerDay);
+    const isPast = m.key < currentMonthKey;
+    let cls = 'cb-timeline-lane-month-bg';
+    if (isPast) cls += ' is-past';
+    return `<div class="${cls}" style="width: ${w}px; min-width: ${w}px;"></div>`;
+  }).join('');
+
+  // Selected central banks in order
+  const activeBankConfigs = CENTRAL_BANKS_CONFIG.filter(cfg => DashboardState.selectedBanks.has(cfg.id));
+
+  // Determine next upcoming meeting for special visual accent
+  const futureSorted = filtered.filter(d => d.datum >= todayStr).sort((a, b) => a.datum.localeCompare(b.datum));
+  const nextMeetingKey = futureSorted.length > 0 ? `${futureSorted[0].bank}_${futureSorted[0].datum}` : '';
+
+  // Rows for each central bank
+  const rowsHtml = activeBankConfigs.map(cfg => {
+    const bankEvents = filtered.filter(d => d.bank === cfg.id);
+
+    const nodesHtml = bankEvents.map(ev => {
+      const evDate = new Date(ev.datum + 'T00:00:00');
+      if (evDate < startDate || evDate > endDate) return '';
+
+      const daysDiff = (evDate - startDate) / (1000 * 60 * 60 * 24);
+      const leftPx = Math.round(daysDiff * pxPerDay);
+      const isPast = ev.datum < todayStr;
+      const isNext = `${ev.bank}_${ev.datum}` === nextMeetingKey;
+
+      let nodeCls = 'cb-timeline-node';
+      if (isPast) nodeCls += ' is-past-node';
+      else if (isNext) nodeCls += ' is-next-meeting';
+
+      const dayOfMonth = ev.datum.split('-')[2];
+
+      const relativeCountdown = !isPast ? getRelativeTimeBadge(ev.datum, todayStr).replace(/<[^>]*>/g, '') : 'Bereits stattgefunden';
+
+      return `
+        <div class="${nodeCls}" style="left: ${leftPx}px;">
+          <span>${dayOfMonth}.</span>
+          <div class="cb-timeline-tooltip">
+            <strong style="color: #FFFFFF;">${ev.bank}</strong> (${cfg.name})<br/>
+            <span>🗓️ ${formatDateDE(ev.datum)}</span>
+            <br/><span style="color: ${isPast ? '#94A3B8' : '#FDF2F7'}; font-weight: 700;">${relativeCountdown}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="cb-timeline-row">
+        <div class="cb-timeline-bank-label">
+          ${getCountryBadge(cfg.code, cfg.id)}
+        </div>
+        <div class="cb-timeline-lane" style="width: ${totalWidthPx}px; min-width: ${totalWidthPx}px;">
+          <div class="cb-timeline-lane-bg">${laneBgMonthsHtml}</div>
+          <div class="cb-timeline-guide-line"></div>
+          ${nodesHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="cb-timeline-legend" style="display: flex; gap: 16px; align-items: center; margin-bottom: 12px; font-size: 12px; color: var(--text-dark); flex-wrap: wrap;">
+      <span style="display: inline-flex; align-items: center; gap: 6px;">
+        <span style="width: 12px; height: 12px; background-color: var(--lukb-berry-600); display: inline-block;"></span>
+        <strong>Nächster Zinsentscheid</strong>
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 6px;">
+        <span style="width: 12px; height: 12px; background-color: var(--lukb-blue-700); display: inline-block;"></span>
+        <span>Anstehende Entscheide</span>
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 6px;">
+        <span style="width: 12px; height: 12px; background-color: #94A3B8; opacity: 0.65; display: inline-block;"></span>
+        <span>Vergangene Entscheide (letzte 30 Tage)</span>
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 6px;">
+        <span style="width: 12px; height: 2px; background-color: var(--lukb-berry-600); display: inline-block;"></span>
+        <span>Heute-Linie</span>
+      </span>
+      <span style="margin-left: auto; color: var(--text-muted); font-size: 11.5px;">
+        ↔️ Horizontal scrollbar
+      </span>
+    </div>
+
+    <div class="cb-timeline-wrapper" id="cb-timeline-scroll-wrapper">
+      <div class="cb-timeline-inner" style="width: calc(160px + ${totalWidthPx}px);">
+        <div class="cb-timeline-header-row">
+          <div class="cb-timeline-corner">Zentralbank</div>
+          <div class="cb-timeline-months-container" style="width: ${totalWidthPx}px; min-width: ${totalWidthPx}px;">
+            ${headerMonthsHtml}
+            <div class="cb-timeline-today-line" style="left: ${todayX}px;">
+              <span class="cb-timeline-today-flag">Heute</span>
+            </div>
+          </div>
+        </div>
+        <div style="position: relative;">
+          ${rowsHtml}
+          <div class="cb-timeline-today-line" style="left: calc(160px + ${todayX}px); top: 0; bottom: 0;"></div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 // -------------------------------------------------------------

@@ -50,16 +50,17 @@ format:
         <select id="filter-macro-country" class="lukb-select">
           <option value="all">Alle Länder / Regionen</option>
           <option value="CH">Schweiz</option>
-          <option value="EU">Euroraum</option>
+          <option value="EU">Eurozone / Euroraum</option>
           <option value="DE">Deutschland</option>
           <option value="GB">UK</option>
           <option value="US">USA</option>
           <option value="JP">Japan</option>
+          <option value="CN">China</option>
         </select>
       </div>
     </div>
     
-    <!-- Dynamic Table Container (preventing Quarto pandoc table filter issues) -->
+    <!-- Dynamic Table Container -->
     <div class="lukb-card-body">
       <div id="macro-table-container"></div>
     </div>
@@ -127,7 +128,7 @@ format:
     </div>
 
     <div class="lukb-footer-note">
-      <span>Auswahl: SNB, EZB, Fed, BoE, BoJ, BoC, RBA, Norges Bank, Riksbank, RBNZ</span>
+      <span>Auswahl: SNB, US Fed, EZB, BoJ, BoE, BoC, RBA, Norges Bank, Riksbank, RBNZ</span>
       <span>Filter: Anstehende Termine ab aktuellem Systemdatum (Tabelle) / Jahresübersicht (Kalender)</span>
     </div>
   </section>
@@ -152,271 +153,216 @@ format:
 <!-- Inline Fallback Data Scripts for instant rendering (local file:// and web server) -->
 <script id="embedded-data-macro" type="application/json">
 [
-  { "datum": "2026-09-14", "uhrzeit": "08:30", "land": "Schweiz", "land_code": "CH", "indikator": "Erzeuger- und Importpreisindex", "periode": "Aug", "vorher": "-0.1%", "erwartung": "0.1%", "wichtigkeit": "mittel" },
-  { "datum": "2026-09-14", "uhrzeit": "11:00", "land": "Euroraum", "land_code": "EU", "indikator": "Industrieproduktion (MoM)", "periode": "Jul", "vorher": "-0.1%", "erwartung": "0.3%", "wichtigkeit": "mittel" },
-  { "datum": "2026-09-14", "uhrzeit": "11:00", "land": "Euroraum", "land_code": "EU", "indikator": "Verbrauchervertrauen (Vorläufig)", "periode": "Sep", "vorher": "-13.4", "erwartung": "-13.0", "wichtigkeit": "mittel" },
-  { "datum": "2026-09-15", "uhrzeit": "08:00", "land": "UK", "land_code": "GB", "indikator": "Arbeitslosenquote (ILO 3M)", "periode": "Jul", "vorher": "4.2%", "erwartung": "4.1%", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-15", "uhrzeit": "11:00", "land": "Deutschland", "land_code": "DE", "indikator": "ZEW Konjunkturerwartungen", "periode": "Sep", "vorher": "19.2", "erwartung": "21.5", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-15", "uhrzeit": "11:00", "land": "Euroraum", "land_code": "EU", "indikator": "ZEW Konjunkturerwartungen", "periode": "Sep", "vorher": "17.9", "erwartung": "20.1", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-15", "uhrzeit": "14:30", "land": "USA", "land_code": "US", "indikator": "Empire State Herstellungsindex", "periode": "Sep", "vorher": "-4.7", "erwartung": "2.1", "wichtigkeit": "mittel" },
-  { "datum": "2026-09-16", "uhrzeit": "08:00", "land": "UK", "land_code": "GB", "indikator": "Verbraucherpreisindex (YoY)", "periode": "Aug", "vorher": "2.2%", "erwartung": "2.2%", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-16", "uhrzeit": "14:30", "land": "USA", "land_code": "US", "indikator": "Einzelhandelsumsätze (MoM)", "periode": "Aug", "vorher": "1.0%", "erwartung": "0.3%", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-16", "uhrzeit": "14:30", "land": "USA", "land_code": "US", "indikator": "Einzelhandelsumsätze Kernrate (MoM)", "periode": "Aug", "vorher": "0.4%", "erwartung": "0.2%", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-16", "uhrzeit": "15:15", "land": "USA", "land_code": "US", "indikator": "Industrieproduktion (MoM)", "periode": "Aug", "vorher": "-0.6%", "erwartung": "0.2%", "wichtigkeit": "mittel" },
-  { "datum": "2026-09-16", "uhrzeit": "19:00", "land": "USA", "land_code": "US", "indikator": "Fed FOMC Zinsentscheid", "periode": "Sep", "vorher": "3.50%", "erwartung": "3.25%", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-16", "uhrzeit": "19:30", "land": "USA", "land_code": "US", "indikator": "FOMC Pressekonferenz & Zinsprojektionen (Dot Plot)", "periode": "Sep", "vorher": "-", "erwartung": "-", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-17", "uhrzeit": "11:00", "land": "Euroraum", "land_code": "EU", "indikator": "Harmonisierter Verbraucherpreisindex (Endstand)", "periode": "Aug", "vorher": "2.2%", "erwartung": "2.2%", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-17", "uhrzeit": "13:00", "land": "UK", "land_code": "GB", "indikator": "Bank of England Zinsentscheid", "periode": "Sep", "vorher": "3.50%", "erwartung": "3.25%", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-17", "uhrzeit": "14:30", "land": "USA", "land_code": "US", "indikator": "Erstanträge auf Arbeitslosenhilfe", "periode": "Woche", "vorher": "230k", "erwartung": "225k", "wichtigkeit": "mittel" },
-  { "datum": "2026-09-17", "uhrzeit": "14:30", "land": "USA", "land_code": "US", "indikator": "Philly Fed Herstellungsindex", "periode": "Sep", "vorher": "-7.0", "erwartung": "2.0", "wichtigkeit": "mittel" },
-  { "datum": "2026-09-18", "uhrzeit": "04:30", "land": "Japan", "land_code": "JP", "indikator": "Bank of Japan Zinsentscheid", "periode": "Sep", "vorher": "1.00%", "erwartung": "1.25%", "wichtigkeit": "hoch" },
-  { "datum": "2026-09-18", "uhrzeit": "08:00", "land": "Deutschland", "land_code": "DE", "indikator": "Erzeugerpreise (MoM)", "periode": "Aug", "vorher": "0.2%", "erwartung": "0.1%", "wichtigkeit": "mittel" },
-  { "datum": "2026-09-18", "uhrzeit": "16:00", "land": "USA", "land_code": "US", "indikator": "Uni Michigan Verbraucherstimmung (Vorläufig)", "periode": "Sep", "vorher": "67.9", "erwartung": "68.5", "wichtigkeit": "hoch" }
+  { "Datum": "Mo, 07. Sep", "Zeit": "8:00", "Land": "Deutschland", "Indikator": "Industrieproduktion (%MoM)", "Periode": "Jul 2026", "Vorher": "0.2", "Erwartung": "0.1" },
+  { "Datum": "", "Zeit": "9:00", "Land": "Schweiz", "Indikator": "Arbeitslosenquote (%)", "Periode": "Aug 2026", "Vorher": "3.1", "Erwartung": "3.1" },
+  { "Datum": "", "Zeit": "11:00", "Land": "Eurozone", "Indikator": "BIP (%QoQ)", "Periode": "Q2 2026", "Vorher": "0.4", "Erwartung": "0.4" },
+  { "Datum": "Di, 08. Sep", "Zeit": "8:00", "Land": "Deutschland", "Indikator": "Exporte (%YoY)", "Periode": "Jul 2026", "Vorher": "0.9", "Erwartung": "0" },
+  { "Datum": "Mi, 09. Sep", "Zeit": "0:00", "Land": "China", "Indikator": "Exporte (%YoY)", "Periode": "Aug 2026", "Vorher": "23.9", "Erwartung": "25" },
+  { "Datum": "", "Zeit": "3:30", "Land": "China", "Indikator": "Inflation (%YoY)", "Periode": "Aug 2026", "Vorher": "0.5", "Erwartung": "0.8" },
+  { "Datum": "Do, 10. Sep", "Zeit": "14:15", "Land": "Eurozone", "Indikator": "EZB Einlagezinssatz", "Periode": "Sep 2026", "Vorher": "2.25", "Erwartung": "2.5" },
+  { "Datum": "", "Zeit": "14:30", "Land": "USA", "Indikator": "Anträge Arbeitslosengeld (in 1'000)", "Periode": "w 05 Sep", "Vorher": "206", "Erwartung": "205" },
+  { "Datum": "", "Zeit": "", "Land": "USA", "Indikator": "Produzentenpreise (%MoM)", "Periode": "Aug 2026", "Vorher": "0", "Erwartung": "0.4" },
+  { "Datum": "Fr, 11. Sep", "Zeit": "8:00", "Land": "UK", "Indikator": "BIP (3M/3M)", "Periode": "Jul 2026", "Vorher": "0.4", "Erwartung": "0.3" },
+  { "Datum": "", "Zeit": "14:30", "Land": "USA", "Indikator": "Kerninflation (%YoY)", "Periode": "Aug 2026", "Vorher": "2.5", "Erwartung": "2.4" },
+  { "Datum": "", "Zeit": "", "Land": "USA", "Indikator": "Inflation (%YoY)", "Periode": "Aug 2026", "Vorher": "3.4", "Erwartung": "3.4" },
+  { "Datum": "", "Zeit": "16:00", "Land": "USA", "Indikator": "Verbrauchervertrauen, Frühschätzung (U Michigan)", "Periode": "Sep 2026", "Vorher": "51.7", "Erwartung": "51" }
 ]
 </script>
 
 <script id="embedded-data-cb" type="application/json">
 [
-  { "bank": "SNB", "short": "SNB", "name": "Schweizerische Nationalbank", "land": "Schweiz", "land_code": "CH", "datum": "2026-03-19", "uhrzeit": "09:30", "leitzins_aktuell": "0.25%", "erwartung": "0.25%", "typ": "Geldpolitische Lagebeurteilung" },
-  { "bank": "SNB", "short": "SNB", "name": "Schweizerische Nationalbank", "land": "Schweiz", "land_code": "CH", "datum": "2026-06-18", "uhrzeit": "09:30", "leitzins_aktuell": "0.25%", "erwartung": "0.25%", "typ": "Geldpolitische Lagebeurteilung" },
-  { "bank": "SNB", "short": "SNB", "name": "Schweizerische Nationalbank", "land": "Schweiz", "land_code": "CH", "datum": "2026-09-24", "uhrzeit": "09:30", "leitzins_aktuell": "0.25%", "erwartung": "0.25%", "typ": "Geldpolitische Lagebeurteilung" },
-  { "bank": "SNB", "short": "SNB", "name": "Schweizerische Nationalbank", "land": "Schweiz", "land_code": "CH", "datum": "2026-12-10", "uhrzeit": "09:30", "leitzins_aktuell": "0.25%", "erwartung": "0.25%", "typ": "Geldpolitische Lagebeurteilung" },
-  { "bank": "SNB", "short": "SNB", "name": "Schweizerische Nationalbank", "land": "Schweiz", "land_code": "CH", "datum": "2027-03-18", "uhrzeit": "09:30", "leitzins_aktuell": "0.25%", "erwartung": "0.25%", "typ": "Geldpolitische Lagebeurteilung" },
-  { "bank": "SNB", "short": "SNB", "name": "Schweizerische Nationalbank", "land": "Schweiz", "land_code": "CH", "datum": "2027-06-17", "uhrzeit": "09:30", "leitzins_aktuell": "0.25%", "erwartung": "0.25%", "typ": "Geldpolitische Lagebeurteilung" },
-  { "bank": "SNB", "short": "SNB", "name": "Schweizerische Nationalbank", "land": "Schweiz", "land_code": "CH", "datum": "2027-09-23", "uhrzeit": "09:30", "leitzins_aktuell": "0.25%", "erwartung": "0.25%", "typ": "Geldpolitische Lagebeurteilung" },
-  { "bank": "SNB", "short": "SNB", "name": "Schweizerische Nationalbank", "land": "Schweiz", "land_code": "CH", "datum": "2027-12-09", "uhrzeit": "09:30", "leitzins_aktuell": "0.25%", "erwartung": "0.25%", "typ": "Geldpolitische Lagebeurteilung" },
-
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-01-22", "uhrzeit": "14:15", "leitzins_aktuell": "2.25%", "erwartung": "2.25%", "typ": "Zinsentscheid" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-03-12", "uhrzeit": "14:15", "leitzins_aktuell": "2.25%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-04-30", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-06-11", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-07-23", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-09-10", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-10-29", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2026-12-17", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2027-01-28", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2027-03-11", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2027-04-29", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2027-06-10", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2027-07-22", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2027-09-09", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2027-10-28", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid" },
-  { "bank": "EZB", "short": "EZB", "name": "Europäische Zentralbank", "land": "Euroraum", "land_code": "EU", "datum": "2027-12-16", "uhrzeit": "14:15", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Zinsentscheid & Projektionen" },
-
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-01-28", "uhrzeit": "19:00", "leitzins_aktuell": "3.75%", "erwartung": "3.75%", "typ": "FOMC Zinsentscheid" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-03-18", "uhrzeit": "19:00", "leitzins_aktuell": "3.75%", "erwartung": "3.50%", "typ": "FOMC Zinsentscheid & SEP" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-05-06", "uhrzeit": "19:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "FOMC Zinsentscheid" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-06-17", "uhrzeit": "19:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "FOMC Zinsentscheid & SEP" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-07-29", "uhrzeit": "19:00", "leitzins_aktuell": "3.50%", "erwartung": "3.25%", "typ": "FOMC Zinsentscheid" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-09-16", "uhrzeit": "19:00", "leitzins_aktuell": "3.25%", "erwartung": "3.25%", "typ": "FOMC Zinsentscheid & SEP" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-10-28", "uhrzeit": "19:00", "leitzins_aktuell": "3.25%", "erwartung": "3.00%", "typ": "FOMC Zinsentscheid" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2026-12-09", "uhrzeit": "19:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "FOMC Zinsentscheid & SEP" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2027-01-27", "uhrzeit": "19:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "FOMC Zinsentscheid" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2027-03-17", "uhrzeit": "19:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "FOMC Zinsentscheid & SEP" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2027-05-05", "uhrzeit": "19:00", "leitzins_aktuell": "3.00%", "erwartung": "2.75%", "typ": "FOMC Zinsentscheid" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2027-06-16", "uhrzeit": "19:00", "leitzins_aktuell": "2.75%", "erwartung": "2.75%", "typ": "FOMC Zinsentscheid & SEP" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2027-07-28", "uhrzeit": "19:00", "leitzins_aktuell": "2.75%", "erwartung": "2.75%", "typ": "FOMC Zinsentscheid" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2027-09-22", "uhrzeit": "19:00", "leitzins_aktuell": "2.75%", "erwartung": "2.75%", "typ": "FOMC Zinsentscheid & SEP" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2027-11-03", "uhrzeit": "19:00", "leitzins_aktuell": "2.75%", "erwartung": "2.75%", "typ": "FOMC Zinsentscheid" },
-  { "bank": "Fed", "short": "Fed", "name": "Federal Reserve (FOMC)", "land": "USA", "land_code": "US", "datum": "2027-12-15", "uhrzeit": "19:00", "leitzins_aktuell": "2.75%", "erwartung": "2.75%", "typ": "FOMC Zinsentscheid & SEP" },
-
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-02-05", "uhrzeit": "13:00", "leitzins_aktuell": "3.75%", "erwartung": "3.75%", "typ": "MPC Zinsentscheid & MPR" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-03-19", "uhrzeit": "13:00", "leitzins_aktuell": "3.75%", "erwartung": "3.50%", "typ": "MPC Zinsentscheid" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-05-07", "uhrzeit": "13:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "MPC Zinsentscheid & MPR" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-06-18", "uhrzeit": "13:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "MPC Zinsentscheid" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-08-06", "uhrzeit": "13:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "MPC Zinsentscheid & MPR" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-09-17", "uhrzeit": "13:00", "leitzins_aktuell": "3.50%", "erwartung": "3.25%", "typ": "MPC Zinsentscheid" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-11-05", "uhrzeit": "13:00", "leitzins_aktuell": "3.25%", "erwartung": "3.25%", "typ": "MPC Zinsentscheid & MPR" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2026-12-17", "uhrzeit": "13:00", "leitzins_aktuell": "3.25%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2027-02-04", "uhrzeit": "13:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid & MPR" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2027-03-18", "uhrzeit": "13:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2027-05-06", "uhrzeit": "13:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid & MPR" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2027-06-17", "uhrzeit": "13:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2027-08-05", "uhrzeit": "13:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid & MPR" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2027-09-16", "uhrzeit": "13:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2027-11-04", "uhrzeit": "13:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid & MPR" },
-  { "bank": "Bank of England", "short": "BoE", "name": "Bank of England (MPC)", "land": "UK", "land_code": "GB", "datum": "2027-12-16", "uhrzeit": "13:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "MPC Zinsentscheid" },
-
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-01-23", "uhrzeit": "04:30", "leitzins_aktuell": "0.75%", "erwartung": "0.75%", "typ": "Zinsentscheid & Ausblick" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-03-19", "uhrzeit": "04:30", "leitzins_aktuell": "0.75%", "erwartung": "1.00%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-04-30", "uhrzeit": "04:30", "leitzins_aktuell": "1.00%", "erwartung": "1.00%", "typ": "Zinsentscheid & Ausblick" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-06-12", "uhrzeit": "04:30", "leitzins_aktuell": "1.00%", "erwartung": "1.00%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-07-31", "uhrzeit": "04:30", "leitzins_aktuell": "1.00%", "erwartung": "1.00%", "typ": "Zinsentscheid & Ausblick" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-09-18", "uhrzeit": "04:30", "leitzins_aktuell": "1.00%", "erwartung": "1.25%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-10-30", "uhrzeit": "04:30", "leitzins_aktuell": "1.25%", "erwartung": "1.25%", "typ": "Zinsentscheid & Ausblick" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2026-12-18", "uhrzeit": "04:30", "leitzins_aktuell": "1.25%", "erwartung": "1.25%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2027-01-22", "uhrzeit": "04:30", "leitzins_aktuell": "1.25%", "erwartung": "1.50%", "typ": "Zinsentscheid & Ausblick" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2027-03-19", "uhrzeit": "04:30", "leitzins_aktuell": "1.50%", "erwartung": "1.50%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2027-04-28", "uhrzeit": "04:30", "leitzins_aktuell": "1.50%", "erwartung": "1.50%", "typ": "Zinsentscheid & Ausblick" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2027-06-18", "uhrzeit": "04:30", "leitzins_aktuell": "1.50%", "erwartung": "1.50%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2027-07-30", "uhrzeit": "04:30", "leitzins_aktuell": "1.50%", "erwartung": "1.50%", "typ": "Zinsentscheid & Ausblick" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2027-09-17", "uhrzeit": "04:30", "leitzins_aktuell": "1.50%", "erwartung": "1.50%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2027-10-29", "uhrzeit": "04:30", "leitzins_aktuell": "1.50%", "erwartung": "1.50%", "typ": "Zinsentscheid & Ausblick" },
-  { "bank": "Bank of Japan", "short": "BoJ", "name": "Bank of Japan", "land": "Japan", "land_code": "JP", "datum": "2027-12-17", "uhrzeit": "04:30", "leitzins_aktuell": "1.50%", "erwartung": "1.50%", "typ": "Zinsentscheid" },
-
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-01-28", "uhrzeit": "15:45", "leitzins_aktuell": "2.75%", "erwartung": "2.75%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-03-11", "uhrzeit": "15:45", "leitzins_aktuell": "2.75%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-04-15", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-06-03", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-07-29", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-09-09", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-10-28", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2026-12-09", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2027-01-27", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2027-03-10", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2027-04-14", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2027-06-02", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2027-07-28", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2027-09-08", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2027-10-27", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Bank of Canada", "short": "BoC", "name": "Bank of Canada", "land": "Kanada", "land_code": "CA", "datum": "2027-12-08", "uhrzeit": "15:45", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Zinsentscheid" },
-
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-02-17", "uhrzeit": "05:30", "leitzins_aktuell": "3.60%", "erwartung": "3.60%", "typ": "Zinsentscheid & SMP" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-03-31", "uhrzeit": "05:30", "leitzins_aktuell": "3.60%", "erwartung": "3.35%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-05-19", "uhrzeit": "05:30", "leitzins_aktuell": "3.35%", "erwartung": "3.35%", "typ": "Zinsentscheid & SMP" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-07-07", "uhrzeit": "05:30", "leitzins_aktuell": "3.35%", "erwartung": "3.35%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-08-11", "uhrzeit": "05:30", "leitzins_aktuell": "3.35%", "erwartung": "3.35%", "typ": "Zinsentscheid & SMP" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-09-29", "uhrzeit": "05:30", "leitzins_aktuell": "3.35%", "erwartung": "3.10%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-11-03", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid & SMP" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2026-12-08", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2027-02-16", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid & SMP" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2027-03-30", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2027-05-18", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid & SMP" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2027-07-06", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2027-08-10", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid & SMP" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2027-09-28", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2027-11-02", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid & SMP" },
-  { "bank": "Bank of Australia", "short": "RBA", "name": "Reserve Bank of Australia (RBA)", "land": "Australien", "land_code": "AU", "datum": "2027-12-07", "uhrzeit": "05:30", "leitzins_aktuell": "3.10%", "erwartung": "3.10%", "typ": "Zinsentscheid" },
-
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-01-22", "uhrzeit": "10:00", "leitzins_aktuell": "3.75%", "erwartung": "3.75%", "typ": "Zwischenbericht" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-03-19", "uhrzeit": "10:00", "leitzins_aktuell": "3.75%", "erwartung": "3.50%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-05-07", "uhrzeit": "10:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Zwischenbericht" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-06-18", "uhrzeit": "10:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-08-13", "uhrzeit": "10:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Zwischenbericht" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-09-17", "uhrzeit": "10:00", "leitzins_aktuell": "3.50%", "erwartung": "3.25%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-11-05", "uhrzeit": "10:00", "leitzins_aktuell": "3.25%", "erwartung": "3.25%", "typ": "Zwischenbericht" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2026-12-17", "uhrzeit": "10:00", "leitzins_aktuell": "3.25%", "erwartung": "3.00%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2027-01-21", "uhrzeit": "10:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zwischenbericht" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2027-03-18", "uhrzeit": "10:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2027-05-06", "uhrzeit": "10:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zwischenbericht" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2027-06-17", "uhrzeit": "10:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2027-08-12", "uhrzeit": "10:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zwischenbericht" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2027-09-16", "uhrzeit": "10:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zinsentscheid & MPR" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2027-11-04", "uhrzeit": "10:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zwischenbericht" },
-  { "bank": "Norges Bank", "short": "Norges Bank", "name": "Norges Bank", "land": "Norwegen", "land_code": "NO", "datum": "2027-12-16", "uhrzeit": "10:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zinsentscheid & MPR" },
-
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-02-05", "uhrzeit": "09:30", "leitzins_aktuell": "2.50%", "erwartung": "2.50%", "typ": "Geldpolitische Aktualisierung" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-03-19", "uhrzeit": "09:30", "leitzins_aktuell": "2.50%", "erwartung": "2.25%", "typ": "Geldpolitischer Bericht" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-05-07", "uhrzeit": "09:30", "leitzins_aktuell": "2.25%", "erwartung": "2.25%", "typ": "Geldpolitische Aktualisierung" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-06-18", "uhrzeit": "09:30", "leitzins_aktuell": "2.25%", "erwartung": "2.25%", "typ": "Geldpolitischer Bericht" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-08-19", "uhrzeit": "09:30", "leitzins_aktuell": "2.25%", "erwartung": "2.25%", "typ": "Geldpolitische Aktualisierung" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-09-22", "uhrzeit": "09:30", "leitzins_aktuell": "2.25%", "erwartung": "2.00%", "typ": "Geldpolitischer Bericht" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-11-04", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitische Aktualisierung" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2026-12-17", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitischer Bericht" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2027-02-04", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitische Aktualisierung" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2027-03-18", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitischer Bericht" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2027-05-06", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitische Aktualisierung" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2027-06-17", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitischer Bericht" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2027-08-18", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitische Aktualisierung" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2027-09-21", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitischer Bericht" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2027-11-03", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitische Aktualisierung" },
-  { "bank": "Swedish Riksbank", "short": "Riksbank", "name": "Sveriges Riksbank", "land": "Schweden", "land_code": "SE", "datum": "2027-12-16", "uhrzeit": "09:30", "leitzins_aktuell": "2.00%", "erwartung": "2.00%", "typ": "Geldpolitischer Bericht" },
-
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-02-18", "uhrzeit": "03:00", "leitzins_aktuell": "3.75%", "erwartung": "3.50%", "typ": "Monetary Policy Statement" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-04-08", "uhrzeit": "03:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Zinsentscheid" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-05-27", "uhrzeit": "03:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Monetary Policy Statement" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-07-08", "uhrzeit": "03:00", "leitzins_aktuell": "3.50%", "erwartung": "3.50%", "typ": "Zinsentscheid" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-08-19", "uhrzeit": "03:00", "leitzins_aktuell": "3.50%", "erwartung": "3.25%", "typ": "Monetary Policy Statement" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-10-07", "uhrzeit": "03:00", "leitzins_aktuell": "3.25%", "erwartung": "3.00%", "typ": "Zinsentscheid" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2026-11-25", "uhrzeit": "03:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Monetary Policy Statement" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2027-02-17", "uhrzeit": "03:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Monetary Policy Statement" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2027-04-07", "uhrzeit": "03:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zinsentscheid" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2027-05-26", "uhrzeit": "03:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Monetary Policy Statement" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2027-07-07", "uhrzeit": "03:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zinsentscheid" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2027-08-18", "uhrzeit": "03:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Monetary Policy Statement" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2027-10-06", "uhrzeit": "03:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Zinsentscheid" },
-  { "bank": "RBNZ", "short": "RBNZ", "name": "Reserve Bank of New Zealand", "land": "Neuseeland", "land_code": "NZ", "datum": "2027-11-24", "uhrzeit": "03:00", "leitzins_aktuell": "3.00%", "erwartung": "3.00%", "typ": "Monetary Policy Statement" }
+  {
+    "zentralbanken": [
+      {
+        "name": "Schweizerische Nationalbank",
+        "abkuerzung": "SNB",
+        "zinsentscheide": [
+          "2026-09-24",
+          "2026-12-10",
+          "2027-03-18",
+          "2027-06-24",
+          "2027-09-23",
+          "2027-12-16"
+        ]
+      },
+      {
+        "name": "Federal Reserve System",
+        "abkuerzung": "US Fed",
+        "zinsentscheide": [
+          "2026-09-16",
+          "2026-10-28",
+          "2026-12-09",
+          "2027-01-27",
+          "2027-03-17",
+          "2027-04-28",
+          "2027-06-09",
+          "2027-07-28",
+          "2027-09-15",
+          "2027-10-27",
+          "2027-12-08"
+        ]
+      },
+      {
+        "name": "Europäische Zentralbank",
+        "abkuerzung": "EZB",
+        "zinsentscheide": [
+          "2026-09-10",
+          "2026-10-29",
+          "2026-12-17",
+          "2027-02-04",
+          "2027-03-18",
+          "2027-04-29",
+          "2027-06-10",
+          "2027-07-22",
+          "2027-09-09",
+          "2027-10-28",
+          "2027-12-16"
+        ]
+      },
+      {
+        "name": "Bank of Japan",
+        "abkuerzung": "BoJ",
+        "zinsentscheide": [
+          "2026-09-18",
+          "2026-10-30",
+          "2026-12-18",
+          "2027-01-22",
+          "2027-03-18",
+          "2027-04-30",
+          "2027-06-11",
+          "2027-07-22",
+          "2027-09-22",
+          "2027-10-29",
+          "2027-12-17"
+        ]
+      },
+      {
+        "name": "Bank of England",
+        "abkuerzung": "BoE",
+        "zinsentscheide": [
+          "2026-09-17",
+          "2026-11-05",
+          "2026-12-17",
+          "2027-02-04",
+          "2027-03-18",
+          "2027-05-06",
+          "2027-06-17",
+          "2027-08-05",
+          "2027-09-16",
+          "2027-11-04",
+          "2027-12-16"
+        ]
+      },
+      {
+        "name": "Bank of Canada",
+        "abkuerzung": "BoC",
+        "zinsentscheide": [
+          "2026-09-09",
+          "2026-10-28",
+          "2026-12-09",
+          "2027-01-27",
+          "2027-03-10",
+          "2027-04-14",
+          "2027-06-02",
+          "2027-07-28",
+          "2027-09-08",
+          "2027-10-27",
+          "2027-12-08"
+        ]
+      },
+      {
+        "name": "Reserve Bank of Australia",
+        "abkuerzung": "RBA",
+        "zinsentscheide": [
+          "2026-09-29",
+          "2026-11-03",
+          "2026-12-08",
+          "2027-02-16",
+          "2027-03-30",
+          "2027-05-18",
+          "2027-07-06",
+          "2027-08-10",
+          "2027-09-28",
+          "2027-11-02",
+          "2027-12-07"
+        ]
+      },
+      {
+        "name": "Norges Bank",
+        "abkuerzung": "Norges Bank",
+        "zinsentscheide": [
+          "2026-09-17",
+          "2026-11-05",
+          "2026-12-17",
+          "2027-01-21",
+          "2027-03-18",
+          "2027-05-06",
+          "2027-06-17",
+          "2027-08-12",
+          "2027-09-16",
+          "2027-11-04",
+          "2027-12-16"
+        ]
+      },
+      {
+        "name": "Sveriges Riksbank",
+        "abkuerzung": "Riksbank",
+        "zinsentscheide": [
+          "2026-09-22",
+          "2026-11-04",
+          "2026-12-17",
+          "2027-02-04",
+          "2027-03-18",
+          "2027-05-06",
+          "2027-06-17",
+          "2027-08-18",
+          "2027-09-21",
+          "2027-11-03",
+          "2027-12-16"
+        ]
+      },
+      {
+        "name": "Reserve Bank of New Zealand",
+        "abkuerzung": "RBNZ",
+        "zinsentscheide": [
+          "2026-10-07",
+          "2026-11-25",
+          "2027-02-17",
+          "2027-04-07",
+          "2027-05-26",
+          "2027-07-07",
+          "2027-08-18",
+          "2027-10-06",
+          "2027-11-24"
+        ]
+      }
+    ]
+  }
 ]
 </script>
 
 <script id="embedded-data-prognosen" type="application/json">
-{
-  "jahre": ["2025", "2026", "2027"],
-  "aktualisiert": "September 2026",
-  "quelle": "LUKB Research / Consensus / IWF WEO",
-  "daten": [
-    {
-      "land": "Schweiz",
-      "land_code": "CH",
-      "region": "Europa",
-      "bip": { "2025": 1.4, "2026": 1.6, "2027": 1.5 },
-      "inflation": { "2025": 0.7, "2026": 0.9, "2027": 1.0 }
-    },
-    {
-      "land": "Euroraum",
-      "land_code": "EU",
-      "region": "Europa",
-      "bip": { "2025": 1.0, "2026": 1.3, "2027": 1.4 },
-      "inflation": { "2025": 2.1, "2026": 1.9, "2027": 2.0 }
-    },
-    {
-      "land": "UK",
-      "land_code": "GB",
-      "region": "Europa",
-      "bip": { "2025": 1.2, "2026": 1.5, "2027": 1.5 },
-      "inflation": { "2025": 2.5, "2026": 2.1, "2027": 2.0 }
-    },
-    {
-      "land": "USA",
-      "land_code": "US",
-      "region": "Nordamerika",
-      "bip": { "2025": 2.3, "2026": 2.0, "2027": 2.1 },
-      "inflation": { "2025": 2.7, "2026": 2.3, "2027": 2.2 }
-    },
-    {
-      "land": "Japan",
-      "land_code": "JP",
-      "region": "Asien",
-      "bip": { "2025": 1.1, "2026": 0.9, "2027": 0.8 },
-      "inflation": { "2025": 2.4, "2026": 1.9, "2027": 1.8 }
-    },
-    {
-      "land": "China",
-      "land_code": "CN",
-      "region": "Asien",
-      "bip": { "2025": 4.6, "2026": 4.3, "2027": 4.1 },
-      "inflation": { "2025": -0.4, "2026": 1.2, "2027": 1.5 }
-    },
-    {
-      "land": "Indien",
-      "land_code": "IN",
-      "region": "Schwellenländer",
-      "bip": { "2025": 10.2, "2026": 6.8, "2027": 6.5 },
-      "inflation": { "2025": 4.4, "2026": 4.2, "2027": 4.0 }
-    },
-    {
-      "land": "Brasilien",
-      "land_code": "BR",
-      "region": "Schwellenländer",
-      "bip": { "2025": 2.2, "2026": 2.0, "2027": 2.1 },
-      "inflation": { "2025": 4.5, "2026": 3.8, "2027": 3.5 }
-    },
-    {
-      "land": "Russland",
-      "land_code": "RU",
-      "region": "Schwellenländer",
-      "bip": { "2025": -1.1, "2026": 0.8, "2027": 1.2 },
-      "inflation": { "2025": 11.5, "2026": 6.2, "2027": 4.5 }
-    },
-    {
-      "land": "Welt",
-      "land_code": "WORLD",
-      "region": "Global",
-      "bip": { "2025": 3.2, "2026": 3.2, "2027": 3.1 },
-      "inflation": { "2025": 4.2, "2026": 3.5, "2027": 3.2 }
-    }
-  ]
-}
+[
+  { "geo": "Schweiz", "var": "BIP", "timestamp": "2026-09-11", "2025": 1.6, "2026": 2.5, "2027": 1.9 },
+  { "geo": "Schweiz", "var": "CPI", "timestamp": "2026-09-11", "2025": 0.2, "2026": 0.6, "2027": 0.7 },
+  { "geo": "Euroraum", "var": "BIP", "timestamp": "2026-09-11", "2025": 1.3, "2026": 0.9, "2027": 1.7 },
+  { "geo": "Euroraum", "var": "CPI", "timestamp": "2026-09-11", "2025": 2.1, "2026": 2.7, "2027": 2.0 },
+  { "geo": "UK", "var": "BIP", "timestamp": "2026-09-11", "2025": 1.3, "2026": 1.0, "2027": 0.9 },
+  { "geo": "UK", "var": "CPI", "timestamp": "2026-09-11", "2025": 3.4, "2026": 3.1, "2027": 2.6 },
+  { "geo": "USA", "var": "BIP", "timestamp": "2026-09-11", "2025": 2.1, "2026": 1.9, "2027": 1.5 },
+  { "geo": "USA", "var": "CPI", "timestamp": "2026-09-11", "2025": 2.9, "2026": 3.2, "2027": 2.4 },
+  { "geo": "Japan", "var": "BIP", "timestamp": "2026-09-11", "2025": 1.2, "2026": 0.5, "2027": 0.5 },
+  { "geo": "Japan", "var": "CPI", "timestamp": "2026-09-11", "2025": 3.2, "2026": 1.9, "2027": 2.8 },
+  { "geo": "Brasilien", "var": "BIP", "timestamp": "2026-09-11", "2025": 2.6, "2026": 2.2, "2027": 1.4 },
+  { "geo": "Brasilien", "var": "CPI", "timestamp": "2026-09-11", "2025": 5.0, "2026": 4.5, "2027": 4.0 },
+  { "geo": "China", "var": "BIP", "timestamp": "2026-09-11", "2025": 5.0, "2026": 4.7, "2027": 4.6 },
+  { "geo": "China", "var": "CPI", "timestamp": "2026-09-11", "2025": 0.0, "2026": 1.1, "2027": 1.2 },
+  { "geo": "Indien", "var": "BIP", "timestamp": "2026-09-11", "2025": 7.5, "2026": 6.7, "2027": 6.8 },
+  { "geo": "Indien", "var": "CPI", "timestamp": "2026-09-11", "2025": 2.2, "2026": 4.7, "2027": 4.9 },
+  { "geo": "Russland", "var": "BIP", "timestamp": "2026-09-11", "2025": 1.1, "2026": 0.2, "2027": 1.1 },
+  { "geo": "Russland", "var": "CPI", "timestamp": "2026-09-11", "2025": 8.7, "2026": 6.2, "2027": 6.2 },
+  { "geo": "Welt", "var": "BIP", "timestamp": "2026-09-11", "2025": 2.9, "2026": 2.5, "2027": 2.5 }
+]
 </script>
 
 <script>

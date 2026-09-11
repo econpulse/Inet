@@ -1,13 +1,14 @@
 /**
  * LUKB Economic & Central Bank Dashboard Controller
- * Pure Vanilla JS - No external dependencies
+ * Pure Vanilla JS - Standalone, robust normalization for user JSON formats
  */
 
 // Global state
 const DashboardState = {
   activeTab: 'macro',
   macroFilterCountry: 'all',
-  selectedBanks: new Set(['SNB', 'EZB', 'Fed', 'BoE', 'BoJ'])
+  selectedBanks: new Set(['SNB', 'EZB', 'Fed', 'BoE', 'BoJ']),
+  cbView: 'table'
 };
 
 // All 10 tracked central banks configuration
@@ -15,14 +16,58 @@ const CENTRAL_BANKS_CONFIG = [
   { id: 'SNB', name: 'SNB (Schweiz)', bankKey: 'SNB', code: 'CH', defaultSelected: true },
   { id: 'EZB', name: 'EZB (Euroraum)', bankKey: 'EZB', code: 'EU', defaultSelected: true },
   { id: 'Fed', name: 'Fed (USA)', bankKey: 'Fed', code: 'US', defaultSelected: true },
-  { id: 'BoE', name: 'BoE (UK)', bankKey: 'Bank of England', code: 'GB', defaultSelected: true },
-  { id: 'BoJ', name: 'BoJ (Japan)', bankKey: 'Bank of Japan', code: 'JP', defaultSelected: true },
-  { id: 'BoC', name: 'Bank of Canada', bankKey: 'Bank of Canada', code: 'CA', defaultSelected: false },
-  { id: 'RBA', name: 'Bank of Australia', bankKey: 'Bank of Australia', code: 'AU', defaultSelected: false },
-  { id: 'Norges Bank', name: 'Norges Bank', bankKey: 'Norges Bank', code: 'NO', defaultSelected: false },
-  { id: 'Riksbank', name: 'Swedish Riksbank', bankKey: 'Swedish Riksbank', code: 'SE', defaultSelected: false },
+  { id: 'BoE', name: 'BoE (UK)', bankKey: 'BoE', code: 'GB', defaultSelected: true },
+  { id: 'BoJ', name: 'BoJ (Japan)', bankKey: 'BoJ', code: 'JP', defaultSelected: true },
+  { id: 'BoC', name: 'BoC (Kanada)', bankKey: 'BoC', code: 'CA', defaultSelected: false },
+  { id: 'RBA', name: 'RBA (Australien)', bankKey: 'RBA', code: 'AU', defaultSelected: false },
+  { id: 'Norges Bank', name: 'Norges Bank (Norwegen)', bankKey: 'Norges Bank', code: 'NO', defaultSelected: false },
+  { id: 'Riksbank', name: 'Riksbank (Schweden)', bankKey: 'Riksbank', code: 'SE', defaultSelected: false },
   { id: 'RBNZ', name: 'RBNZ (Neuseeland)', bankKey: 'RBNZ', code: 'NZ', defaultSelected: false }
 ];
+
+// Country & Flag Code Mapping
+const COUNTRY_MAP = {
+  'schweiz': { code: 'ch', name: 'Schweiz' },
+  'ch': { code: 'ch', name: 'Schweiz' },
+  'deutschland': { code: 'de', name: 'Deutschland' },
+  'de': { code: 'de', name: 'Deutschland' },
+  'eurozone': { code: 'eu', name: 'Eurozone' },
+  'euroraum': { code: 'eu', name: 'Euroraum' },
+  'eu': { code: 'eu', name: 'Euroraum' },
+  'usa': { code: 'us', name: 'USA' },
+  'us': { code: 'us', name: 'USA' },
+  'uk': { code: 'gb', name: 'UK' },
+  'grossbritannien': { code: 'gb', name: 'UK' },
+  'gb': { code: 'gb', name: 'UK' },
+  'japan': { code: 'jp', name: 'Japan' },
+  'jp': { code: 'jp', name: 'Japan' },
+  'china': { code: 'cn', name: 'China' },
+  'cn': { code: 'cn', name: 'China' },
+  'indien': { code: 'in', name: 'Indien' },
+  'in': { code: 'in', name: 'Indien' },
+  'brasilien': { code: 'br', name: 'Brasilien' },
+  'br': { code: 'br', name: 'Brasilien' },
+  'russland': { code: 'ru', name: 'Russland' },
+  'ru': { code: 'ru', name: 'Russland' },
+  'kanada': { code: 'ca', name: 'Kanada' },
+  'ca': { code: 'ca', name: 'Kanada' },
+  'australien': { code: 'au', name: 'Australien' },
+  'au': { code: 'au', name: 'Australien' },
+  'norwegen': { code: 'no', name: 'Norwegen' },
+  'no': { code: 'no', name: 'Norwegen' },
+  'schweden': { code: 'se', name: 'Schweden' },
+  'se': { code: 'se', name: 'Schweden' },
+  'neuseeland': { code: 'nz', name: 'Neuseeland' },
+  'nz': { code: 'nz', name: 'Neuseeland' },
+  'welt': { code: 'world', name: 'Welt' },
+  'world': { code: 'world', name: 'Welt' }
+};
+
+function getCountryMeta(countryStr) {
+  if (!countryStr) return { code: 'world', name: '' };
+  const key = countryStr.toLowerCase().trim();
+  return COUNTRY_MAP[key] || { code: 'world', name: countryStr };
+}
 
 // Helper: Country Flags (Local SVG vector images)
 function getCountryBadge(countryCode, countryName) {
@@ -31,7 +76,7 @@ function getCountryBadge(countryCode, countryName) {
   return `
     <span class="flag-tag">
       <img src="${flagPath}" alt="${countryCode}" class="flag-img" loading="lazy" />
-      <span>${countryName}</span>
+      <span>${countryName || ''}</span>
     </span>
   `;
 }
@@ -39,7 +84,9 @@ function getCountryBadge(countryCode, countryName) {
 // Helper: Format Date nicely in German
 function formatDateDE(dateStr) {
   if (!dateStr) return '';
+  if (dateStr.includes('.')) return dateStr; // Already formatted e.g. "Mo, 07. Sep"
   const [y, m, d] = dateStr.split('-');
+  if (!d) return dateStr;
   const date = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
   const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
   const dayName = days[date.getDay()];
@@ -49,7 +96,9 @@ function formatDateDE(dateStr) {
 // Helper: Format Month & Year in German
 function formatMonthYearDE(dateStr) {
   if (!dateStr) return '';
-  const [y, m] = dateStr.split('-');
+  const parts = dateStr.split('-');
+  const y = parts[0];
+  const m = parts[1] || '01';
   const months = [
     'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
     'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
@@ -59,22 +108,44 @@ function formatMonthYearDE(dateStr) {
 }
 
 // -------------------------------------------------------------
-// 1. RENDER MAKROKALENDER (With Day Grouping & Time Deduplication)
+// 1. RENDER MAKROKALENDER (Day Grouping & Flexible Key Adapter)
 // -------------------------------------------------------------
-function renderMacroCalendar(data) {
+function normalizeMacroData(raw) {
+  if (!raw || !Array.isArray(raw)) return [];
+  let currentDatum = '';
+  return raw.map(item => {
+    const rawDate = item.Datum !== undefined ? item.Datum : (item.datum || '');
+    if (rawDate && rawDate.trim() !== '') {
+      currentDatum = rawDate.trim();
+    }
+    const rawTime = item.Zeit !== undefined ? item.Zeit : (item.uhrzeit || '');
+    const rawLand = item.Land !== undefined ? item.Land : (item.land || '');
+    const meta = getCountryMeta(rawLand || item.land_code);
+
+    return {
+      datumDisplay: currentDatum,
+      datumRaw: rawDate,
+      uhrzeit: rawTime,
+      land: rawLand,
+      land_code: meta.code.toUpperCase(),
+      indikator: item.Indikator || item.indikator || '',
+      periode: item.Periode || item.periode || '',
+      vorher: item.Vorher !== undefined ? String(item.Vorher) : (item.vorher || ''),
+      erwartung: item.Erwartung !== undefined ? String(item.Erwartung) : (item.erwartung || '')
+    };
+  });
+}
+
+function renderMacroCalendar(rawData) {
   const container = document.getElementById('macro-table-container');
   if (!container) return;
 
+  const data = normalizeMacroData(rawData);
   const filter = DashboardState.macroFilterCountry;
-  let filtered = filter === 'all' 
-    ? [...data]
-    : data.filter(item => item.land_code === filter || (filter === 'CH' && item.land === 'Schweiz'));
 
-  // Sort by date and time
-  filtered.sort((a, b) => {
-    if (a.datum !== b.datum) return a.datum.localeCompare(b.datum);
-    return a.uhrzeit.localeCompare(b.uhrzeit);
-  });
+  let filtered = filter === 'all'
+    ? data
+    : data.filter(item => item.land_code === filter || (filter === 'CH' && item.land === 'Schweiz'));
 
   if (filtered.length === 0) {
     container.innerHTML = `
@@ -84,34 +155,34 @@ function renderMacroCalendar(data) {
     return;
   }
 
-  let lastDate = null;
-  let lastTime = null;
+  let lastGroupDate = null;
+  let lastGroupTime = null;
 
   const rowsHtml = filtered.map(item => {
-    const isNewDay = item.datum !== lastDate;
+    const isNewDay = item.datumDisplay !== lastGroupDate;
     if (isNewDay) {
-      lastDate = item.datum;
-      lastTime = null; // reset time for new day
+      lastGroupDate = item.datumDisplay;
+      lastGroupTime = null;
     }
 
-    const isNewTime = item.uhrzeit !== lastTime;
+    const isNewTime = item.uhrzeit && item.uhrzeit !== lastGroupTime;
     if (isNewTime) {
-      lastTime = item.uhrzeit;
+      lastGroupTime = item.uhrzeit;
     }
 
     const dateDisplay = isNewDay
-      ? `<span class="day-badge">${formatDateDE(item.datum)}</span>`
+      ? `<span class="day-badge">${item.datumDisplay}</span>`
       : `<span class="date-blank"></span>`;
 
     const timeDisplay = isNewTime
       ? `<span style="font-weight: 600; font-family: monospace; color: var(--text-dark);">${item.uhrzeit}</span>`
-      : `<span class="time-blank"></span>`;
+      : (item.uhrzeit ? `<span style="color: var(--text-muted); font-family: monospace;">${item.uhrzeit}</span>` : `<span class="time-blank"></span>`);
 
     const trClass = isNewDay ? 'new-day-row' : '';
 
     return `
       <tr class="${trClass}">
-        <td style="white-space: nowrap; width: 150px;">${dateDisplay}</td>
+        <td style="white-space: nowrap; width: 140px;">${dateDisplay}</td>
         <td style="width: 80px; text-align: left;">${timeDisplay}</td>
         <td style="width: 140px;">${getCountryBadge(item.land_code, item.land)}</td>
         <td style="font-weight: 600; color: var(--lukb-blue-900);">
@@ -128,7 +199,7 @@ function renderMacroCalendar(data) {
     <table class="lukb-table">
       <thead>
         <tr>
-          <th style="width: 150px;">Datum</th>
+          <th style="width: 140px;">Datum</th>
           <th style="width: 80px;">Uhrzeit</th>
           <th style="width: 140px;">Land</th>
           <th>Indikator</th>
@@ -145,12 +216,65 @@ function renderMacroCalendar(data) {
 }
 
 // -------------------------------------------------------------
-// 2. RENDER ZENTRALBANKEN (Table & Calendar Views, System Date Filter, Checkboxes)
+// 2. RENDER ZENTRALBANKEN (Normalizer for user cbs schema)
 // -------------------------------------------------------------
-let cachedCbData = [];
+let cachedCbEvents = [];
 
-function renderCentralBanks(data) {
-  cachedCbData = data || [];
+function normalizeCbData(raw) {
+  if (!raw) return [];
+  let list = [];
+
+  if (Array.isArray(raw)) {
+    if (raw.length > 0 && raw[0].zentralbanken) {
+      list = raw[0].zentralbanken;
+    } else if (raw.length > 0 && raw[0].zinsentscheide) {
+      list = raw;
+    } else if (raw.length > 0 && raw[0].datum) {
+      return raw;
+    }
+  } else if (raw.zentralbanken) {
+    list = raw.zentralbanken;
+  }
+
+  const events = [];
+  list.forEach(item => {
+    const rawAbk = item.abkuerzung || item.short || item.bank || '';
+    const rawName = item.name || '';
+
+    // Match configuration
+    const matchedCfg = CENTRAL_BANKS_CONFIG.find(cfg =>
+      cfg.id.toLowerCase() === rawAbk.toLowerCase() ||
+      cfg.bankKey.toLowerCase() === rawAbk.toLowerCase() ||
+      (rawAbk.includes('Fed') && cfg.id === 'Fed') ||
+      (rawAbk === 'US Fed' && cfg.id === 'Fed') ||
+      rawName.toLowerCase().includes(cfg.bankKey.toLowerCase()) ||
+      rawName.toLowerCase().includes(cfg.id.toLowerCase())
+    );
+
+    const bankId = matchedCfg ? matchedCfg.id : rawAbk;
+    const countryCode = matchedCfg ? matchedCfg.code : 'world';
+    const dates = item.zinsentscheide || (item.datum ? [item.datum] : []);
+
+    dates.forEach(dStr => {
+      events.push({
+        bank: bankId,
+        short: bankId,
+        name: rawName || (matchedCfg ? matchedCfg.name : bankId),
+        land_code: countryCode,
+        datum: dStr,
+        uhrzeit: item.uhrzeit || '',
+        typ: item.typ || 'Zinsentscheid',
+        leitzins_aktuell: item.leitzins_aktuell || '',
+        erwartung: item.erwartung || ''
+      });
+    });
+  });
+
+  return events;
+}
+
+function renderCentralBanks(rawData) {
+  cachedCbEvents = normalizeCbData(rawData);
   const checkboxGrid = document.getElementById('cb-checkbox-grid');
 
   // Render Checkboxes (if not already rendered)
@@ -182,10 +306,7 @@ function renderCentralBanks(data) {
     });
   }
 
-  // Setup View Switch Buttons (if not already initialized)
   initCbViewSwitch();
-
-  // Render both views
   updateCentralBankViews();
 }
 
@@ -222,29 +343,21 @@ function initCbViewSwitch() {
 
 function updateCentralBankViews() {
   const todayStr = new Date().toISOString().slice(0, 10);
-  renderCentralBankTable(cachedCbData, todayStr);
-  renderCentralBankCalendar(cachedCbData, todayStr);
+  renderCentralBankTable(cachedCbEvents, todayStr);
+  renderCentralBankCalendar(cachedCbEvents, todayStr);
 }
 
-// 2A. TABELLEN-ANSICHT (Filtered from system date onwards, grouped by month)
-function renderCentralBankTable(data, todayStr) {
+// 2A. TABELLEN-ANSICHT
+function renderCentralBankTable(events, todayStr) {
   const tableContainer = document.getElementById('cb-table-container');
   if (!tableContainer) return;
 
-  // Filter only selected banks
-  const filteredData = data.filter(d => {
-    const matchedCfg = CENTRAL_BANKS_CONFIG.find(cfg => cfg.bankKey === d.bank || cfg.id === d.short || cfg.id === d.bank);
-    if (!matchedCfg) return false;
-    return DashboardState.selectedBanks.has(matchedCfg.id);
-  });
+  const filtered = events.filter(d => DashboardState.selectedBanks.has(d.bank));
+  const futureData = filtered.filter(d => d.datum >= todayStr);
 
-  // Filter out past meetings for table view (only future from today onwards)
-  const futureData = filteredData.filter(d => d.datum >= todayStr);
-
-  // Sort by date and time ascending
   futureData.sort((a, b) => {
     if (a.datum !== b.datum) return a.datum.localeCompare(b.datum);
-    return a.uhrzeit.localeCompare(b.uhrzeit);
+    return a.bank.localeCompare(b.bank);
   });
 
   if (futureData.length === 0) {
@@ -255,7 +368,6 @@ function renderCentralBankTable(data, todayStr) {
     return;
   }
 
-  // Calculate counts per month for badges
   const monthCounts = {};
   futureData.forEach(item => {
     const mKey = item.datum.slice(0, 7);
@@ -273,7 +385,7 @@ function renderCentralBankTable(data, todayStr) {
       const countText = count === 1 ? '1 Termin' : `${count} Termine`;
       rowsHtml += `
         <tr class="month-group-row">
-          <td colspan="7">
+          <td colspan="5">
             <div class="month-group-title">
               <span>🗓️ ${formatMonthYearDE(item.datum)}</span>
               <span class="month-badge-count">${countText}</span>
@@ -288,12 +400,10 @@ function renderCentralBankTable(data, todayStr) {
         <td style="font-weight: 700; color: var(--lukb-blue-900); width: 140px;">
           ${getCountryBadge(item.land_code, item.bank)}
         </td>
-        <td style="color: var(--text-muted); font-size: 12px;">${item.name}</td>
-        <td style="font-weight: 600; white-space: nowrap; width: 140px;">${formatDateDE(item.datum)}</td>
-        <td style="color: var(--text-muted); font-family: monospace; width: 80px;">${item.uhrzeit}</td>
-        <td>${item.typ}</td>
-        <td class="num" style="font-weight: 600; width: 110px;">${item.leitzins_aktuell}</td>
-        <td class="num" style="font-weight: 700; color: var(--lukb-berry-600); width: 110px;">${item.erwartung}</td>
+        <td style="color: var(--text-muted); font-size: 13px;">${item.name}</td>
+        <td style="font-weight: 600; white-space: nowrap; width: 160px;">${formatDateDE(item.datum)}</td>
+        <td style="width: 140px;">${item.typ}</td>
+        <td style="color: var(--text-muted); font-size: 12px;">Planmässiger Zinsentscheid</td>
       </tr>
     `;
   });
@@ -303,12 +413,10 @@ function renderCentralBankTable(data, todayStr) {
       <thead>
         <tr>
           <th style="width: 140px;">Zentralbank</th>
-          <th>Vollständiger Name</th>
-          <th style="width: 140px;">Datum</th>
-          <th style="width: 80px;">Uhrzeit</th>
-          <th>Art des Entscheids / Publikation</th>
-          <th class="num" style="width: 110px;">Leitzins akt.</th>
-          <th class="num" style="width: 110px;">Konsensus</th>
+          <th>Name</th>
+          <th style="width: 160px;">Datum</th>
+          <th style="width: 140px;">Art des Entscheids</th>
+          <th>Status / Notiz</th>
         </tr>
       </thead>
       <tbody>
@@ -318,21 +426,14 @@ function renderCentralBankTable(data, todayStr) {
   `;
 }
 
-// 2B. KALENDER-ANSICHT (Quarter grid with 3 months per row, dimming past months and past meetings)
-function renderCentralBankCalendar(data, todayStr) {
+// 2B. KALENDER-ANSICHT
+function renderCentralBankCalendar(events, todayStr) {
   const container = document.getElementById('cb-calendar-container');
   if (!container) return;
 
-  const currentMonthKey = todayStr.slice(0, 7); // e.g. "2026-09"
+  const currentMonthKey = todayStr.slice(0, 7);
+  const filtered = events.filter(d => DashboardState.selectedBanks.has(d.bank));
 
-  // Filter only selected banks
-  const filteredData = data.filter(d => {
-    const matchedCfg = CENTRAL_BANKS_CONFIG.find(cfg => cfg.bankKey === d.bank || cfg.id === d.short || cfg.id === d.bank);
-    if (!matchedCfg) return false;
-    return DashboardState.selectedBanks.has(matchedCfg.id);
-  });
-
-  // Quarters definition for 2026 and 2027 (Filter out quarters that lie completely in the past)
   const allQuarters = [
     { name: 'Q1 2026', months: ['2026-01', '2026-02', '2026-03'] },
     { name: 'Q2 2026', months: ['2026-04', '2026-05', '2026-06'] },
@@ -344,7 +445,6 @@ function renderCentralBankCalendar(data, todayStr) {
     { name: 'Q4 2027', months: ['2027-10', '2027-11', '2027-12'] }
   ];
 
-  // A quarter is completely in the past if its last month is strictly before currentMonthKey
   const activeQuarters = allQuarters.filter(q => {
     const lastMonth = q.months[q.months.length - 1];
     return lastMonth >= currentMonthKey;
@@ -367,12 +467,8 @@ function renderCentralBankCalendar(data, todayStr) {
       if (isCurrentMonth) cardClass += ' is-current-month';
       else if (isPastMonth) cardClass += ' is-past-month';
 
-      // Meetings in this month
-      const monthEvents = filteredData.filter(d => d.datum.startsWith(mKey));
-      monthEvents.sort((a, b) => {
-        if (a.datum !== b.datum) return a.datum.localeCompare(b.datum);
-        return a.uhrzeit.localeCompare(b.uhrzeit);
-      });
+      const monthEvents = filtered.filter(d => d.datum.startsWith(mKey));
+      monthEvents.sort((a, b) => a.datum.localeCompare(b.datum));
 
       let eventsListHtml = '';
       if (monthEvents.length === 0) {
@@ -387,13 +483,8 @@ function renderCentralBankCalendar(data, todayStr) {
                 <span class="cb-cal-bank">${getCountryBadge(ev.land_code, ev.bank)}</span>
                 <span class="cb-cal-date">${formatDateDE(ev.datum)}</span>
               </div>
-              <div class="cb-cal-sub">
-                <span>${ev.typ}</span>
-                <span style="font-family: monospace; font-weight: 600;">${ev.uhrzeit}</span>
-              </div>
-              <div class="rate-info" style="margin-top: 3px; font-size: 11px; display: flex; justify-content: space-between;">
-                <span>Aktuell: <strong>${ev.leitzins_aktuell}</strong></span>
-                <span>Erw.: <strong style="color: var(--lukb-berry-600);">${ev.erwartung}</strong></span>
+              <div class="cb-cal-sub" style="margin-top: 3px; font-size: 11px; color: var(--text-muted);">
+                <span>${ev.name}</span>
               </div>
             </div>
           `;
@@ -430,12 +521,62 @@ function renderCentralBankCalendar(data, todayStr) {
 }
 
 // -------------------------------------------------------------
-// 3. RENDER PROGNOSEN (Full dynamic table for 10 regions & 3 years)
+// 3. RENDER PROGNOSEN (Normalizer for user json format)
 // -------------------------------------------------------------
-function renderForecasts(forecastObj) {
+function normalizeForecasts(raw) {
+  if (!raw) return null;
+  if (raw.daten && raw.jahre) return raw; // Already nested format
+
+  if (!Array.isArray(raw)) return null;
+
+  // Extract years dynamically from keys
+  const yearSet = new Set();
+  raw.forEach(row => {
+    Object.keys(row).forEach(k => {
+      if (/^\d{4}$/.test(k)) yearSet.add(k);
+    });
+  });
+  const jahre = Array.from(yearSet).sort();
+
+  // Pivot by geo
+  const geoMap = new Map();
+  raw.forEach(row => {
+    const geo = row.geo;
+    if (!geo) return;
+    if (!geoMap.has(geo)) {
+      const meta = getCountryMeta(geo);
+      geoMap.set(geo, {
+        land: geo,
+        land_code: meta.code.toUpperCase(),
+        bip: {},
+        inflation: {}
+      });
+    }
+    const target = geoMap.get(geo);
+    const varType = (row.var || '').toUpperCase();
+
+    jahre.forEach(y => {
+      if (row[y] !== undefined && row[y] !== null) {
+        if (varType === 'BIP' || varType === 'GDP') {
+          target.bip[y] = parseFloat(row[y]);
+        } else if (varType === 'CPI' || varType === 'INFLATION') {
+          target.inflation[y] = parseFloat(row[y]);
+        }
+      }
+    });
+  });
+
+  return {
+    jahre: jahre.length > 0 ? jahre : ['2025', '2026', '2027'],
+    daten: Array.from(geoMap.values())
+  };
+}
+
+function renderForecasts(raw) {
   const container = document.getElementById('forecasts-table-container');
   if (!container) return;
 
+  const forecastObj = normalizeForecasts(raw);
   if (!forecastObj || !forecastObj.daten || forecastObj.daten.length === 0) {
     container.innerHTML = `
       <div style="text-align: center; padding: 32px; color: var(--text-muted);">
@@ -444,7 +585,7 @@ function renderForecasts(forecastObj) {
     return;
   }
 
-  const years = forecastObj.jahre || ['2025', '2026', '2027'];
+  const years = forecastObj.jahre;
 
   const theadHtml = `
     <thead>
@@ -524,7 +665,7 @@ function renderForecasts(forecastObj) {
 }
 
 // -------------------------------------------------------------
-// TAB SWITCHING
+// TAB SWITCHING & QUICK ACTIONS
 // -------------------------------------------------------------
 function initTabs() {
   const tabs = document.querySelectorAll('.lukb-tab-btn');
@@ -551,7 +692,6 @@ function initTabs() {
   });
 }
 
-// Quick action buttons for Central Bank checkboxes
 function initCbQuickActions(cbData) {
   const btnAll = document.getElementById('cb-select-all');
   const btnDefault = document.getElementById('cb-select-default');
@@ -662,7 +802,6 @@ async function initDashboard() {
   }
 }
 
-// Bootstrap on DOM ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initDashboard);
 } else {

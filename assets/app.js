@@ -865,6 +865,66 @@ function normalizeForecasts(raw) {
   };
 }
 
+// Helper: Render Mini SVG Sparkline
+function renderSparklineSvg(values, isBerry = false) {
+  if (!values || values.length === 0) return '';
+  const validVals = values.filter(v => v !== undefined && v !== null && !isNaN(v));
+  if (validVals.length < 2) return '';
+
+  const w = 46;
+  const h = 20;
+  const pad = 4;
+
+  let min = Math.min(...validVals);
+  let max = Math.max(...validVals);
+  if (max === min) {
+    min -= 0.5;
+    max += 0.5;
+  }
+
+  const strokeColor = isBerry ? '#B31F59' : '#004F92';
+  const fillColor = isBerry ? 'rgba(179, 31, 89, 0.12)' : 'rgba(0, 79, 146, 0.12)';
+  const dotColor = isBerry ? '#B31F59' : '#004F92';
+
+  const pts = validVals.map((val, idx) => {
+    const x = pad + (idx / (validVals.length - 1)) * (w - 2 * pad);
+    const y = h - pad - ((val - min) / (max - min)) * (h - 2 * pad);
+    return { x: x.toFixed(1), y: y.toFixed(1), val };
+  });
+
+  const pathD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+  const areaD = `${pathD} L ${pts[pts.length - 1].x} ${h} L ${pts[0].x} ${h} Z`;
+
+  const dotsHtml = pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="2.2" fill="${dotColor}" />`).join('');
+
+  return `
+    <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow: visible; display: inline-block; vertical-align: middle;">
+      <path d="${areaD}" fill="${fillColor}" />
+      <path d="${pathD}" fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      ${dotsHtml}
+    </svg>
+  `;
+}
+
+// Helper: Calculate Trend Badge (↗, ↘, →)
+function getTrendBadge(values, isInflation = false) {
+  if (!values || values.length < 2) return '';
+  const first = values[0];
+  const last = values[values.length - 1];
+  const diff = last - first;
+
+  if (Math.abs(diff) <= 0.15) {
+    return `<span class="trend-pill neutral" title="Stabil (Δ ${diff >= 0 ? '+' : ''}${diff.toFixed(1)}%-Punkte)">→ 0.0</span>`;
+  }
+  if (diff > 0.15) {
+    const cls = isInflation ? 'trend-pill alert' : 'trend-pill positive';
+    return `<span class="${cls}" title="Steigend (+${diff.toFixed(1)}%-Punkte)">↗ +${diff.toFixed(1)}</span>`;
+  } else {
+    const cls = isInflation ? 'trend-pill positive' : 'trend-pill warning';
+    return `<span class="${cls}" title="Rückläufig (${diff.toFixed(1)}%-Punkte)">↘ ${diff.toFixed(1)}</span>`;
+  }
+}
+
 function renderForecasts(raw) {
   const container = document.getElementById('forecasts-table-container');
   if (!container) return;
@@ -883,18 +943,20 @@ function renderForecasts(raw) {
   const theadHtml = `
     <thead>
       <tr>
-        <th style="width: 25%;">Land / Region</th>
-        <th class="center" colspan="${years.length}" style="background-color: var(--lukb-blue-100); border-left: 2px solid #CBD5E1; color: var(--lukb-blue-900); width: 37.5%;">
+        <th style="width: 22%;">Land / Region</th>
+        <th class="center" colspan="${years.length + 1}" style="background-color: var(--lukb-blue-100); border-left: 2px solid #CBD5E1; color: var(--lukb-blue-900); width: 39%;">
           Reales BIP-Wachstum (%)
         </th>
-        <th class="center" colspan="${years.length}" style="background-color: #F8EBF2; color: var(--lukb-berry-800); border-left: 2px solid #CBD5E1; width: 37.5%;">
+        <th class="center" colspan="${years.length + 1}" style="background-color: #F8EBF2; color: var(--lukb-berry-800); border-left: 2px solid #CBD5E1; width: 39%;">
           Inflation / CPI (%)
         </th>
       </tr>
       <tr>
-        <th style="background-color: var(--lukb-blue-50); width: 25%;"></th>
-        ${years.map(y => `<th style="background-color: var(--lukb-blue-50); width: 12.5%; text-align: center; color: var(--lukb-blue-900); font-weight: 700;">${y}</th>`).join('')}
-        ${years.map(y => `<th style="background-color: #FDF4F8; width: 12.5%; text-align: center; color: var(--lukb-berry-800); font-weight: 700;">${y}</th>`).join('')}
+        <th style="background-color: var(--lukb-blue-50); width: 22%;"></th>
+        ${years.map(y => `<th class="num" style="background-color: var(--lukb-blue-50); width: 9%; color: var(--lukb-blue-900); font-weight: 700;">${y}</th>`).join('')}
+        <th class="center" style="background-color: var(--lukb-blue-50); width: 12%; color: var(--lukb-blue-900); font-weight: 700;">Trend</th>
+        ${years.map(y => `<th class="num" style="background-color: #FDF4F8; width: 9%; color: var(--lukb-berry-800); font-weight: 700;">${y}</th>`).join('')}
+        <th class="center" style="background-color: #FDF4F8; width: 12%; color: var(--lukb-berry-800); font-weight: 700;">Trend</th>
       </tr>
     </thead>
   `;
@@ -905,49 +967,80 @@ function renderForecasts(raw) {
       ? 'style="background-color: #F8FAFD; font-weight: 600;"' 
       : (row.land === 'Welt' ? 'style="background-color: #FAFCFE; font-weight: 600;"' : '');
 
+    const bipVals = years.map(y => row.bip[y] !== undefined ? row.bip[y] : 0);
+    const infVals = years.map(y => row.inflation[y] !== undefined ? row.inflation[y] : 0);
+
     const bipCells = years.map((y, idx) => {
       const val = row.bip[y] !== undefined ? row.bip[y] : 0;
       const isNeg = val < 0;
-      const width = Math.min(Math.max(Math.abs(val) * 4.2, 4), 45);
-      const barClass = isNeg ? 'metric-bar negative' : 'metric-bar';
-      const valClass = isNeg ? 'val-highlight negative' : 'val-highlight';
+      const cls = isNeg ? 'forecast-val negative' : (isSpecial ? 'forecast-val special' : 'forecast-val');
       return `
-        <td style="text-align: left; width: 12.5%; border-left: ${idx === 0 ? '2px solid #CBD5E1' : 'none'};">
-          <div class="metric-bar-container">
-            <span class="${barClass}" style="width: ${width}px;" title="${val.toFixed(1)}%"></span>
-            <span class="${valClass}">${val.toFixed(1)}%</span>
-          </div>
+        <td class="num" style="width: 9%; border-left: ${idx === 0 ? '2px solid #CBD5E1' : 'none'};">
+          <span class="${cls}">${val.toFixed(1)}%</span>
         </td>
       `;
     }).join('');
+
+    const bipTrendCell = `
+      <td class="center" style="width: 12%;">
+        <div class="trend-cell">
+          ${renderSparklineSvg(bipVals, false)}
+          ${getTrendBadge(bipVals, false)}
+        </div>
+      </td>
+    `;
 
     const infCells = years.map((y, idx) => {
       const val = row.inflation[y] !== undefined ? row.inflation[y] : 0;
       const isNeg = val < 0;
-      const width = Math.min(Math.max(Math.abs(val) * 3.8, 4), 45);
-      const barClass = isNeg ? 'metric-bar negative' : 'metric-bar berry';
-      const valClass = isNeg ? 'val-highlight negative' : 'val-highlight';
-      const colorStyle = isNeg ? '' : 'style="color: var(--lukb-berry-700);"';
+      const cls = isNeg ? 'forecast-val negative' : 'forecast-val berry';
       return `
-        <td style="text-align: left; width: 12.5%; border-left: ${idx === 0 ? '2px solid #CBD5E1' : 'none'};">
-          <div class="metric-bar-container">
-            <span class="${barClass}" style="width: ${width}px;" title="${val.toFixed(1)}%"></span>
-            <span class="${valClass}" ${colorStyle}>${val.toFixed(1)}%</span>
-          </div>
+        <td class="num" style="width: 9%; border-left: ${idx === 0 ? '2px solid #CBD5E1' : 'none'};">
+          <span class="${cls}">${val.toFixed(1)}%</span>
         </td>
       `;
     }).join('');
 
+    const infTrendCell = `
+      <td class="center" style="width: 12%;">
+        <div class="trend-cell">
+          ${renderSparklineSvg(infVals, true)}
+          ${getTrendBadge(infVals, true)}
+        </div>
+      </td>
+    `;
+
     return `
       <tr ${rowBg}>
-        <td style="font-weight: ${isSpecial ? '700' : '500'}; width: 25%;">${getCountryBadge(row.land_code, row.land)}</td>
+        <td style="font-weight: ${isSpecial ? '700' : '500'}; width: 22%;">${getCountryBadge(row.land_code, row.land)}</td>
         ${bipCells}
+        ${bipTrendCell}
         ${infCells}
+        ${infTrendCell}
       </tr>
     `;
   }).join('');
 
   container.innerHTML = `
+    <div class="forecast-legend">
+      <span style="font-weight: 700; color: var(--lukb-blue-900);">3-Jahres-Dynamik (2025 → 2027):</span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;">
+        <span class="trend-pill positive">↗ Steigend</span>
+        <span>Beschleunigung / Disinflation</span>
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;">
+        <span class="trend-pill warning">↘ Rückläufig</span>
+        <span>Wachstumsabkühlung</span>
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;">
+        <span class="trend-pill neutral">→ Stabil</span>
+        <span>Seitwärtsbewegung</span>
+      </span>
+      <span style="margin-left: auto; color: var(--text-muted); font-size: 11.5px;">
+        Daten: LUKB Consensus & Ausblick
+      </span>
+    </div>
+
     <table class="lukb-table" style="table-layout: fixed; width: 100%;">
       ${theadHtml}
       <tbody>

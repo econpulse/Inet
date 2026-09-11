@@ -1955,22 +1955,22 @@ function renderSparklineSvg(values, isBerry = false) {
   `;
 }
 
-// Helper: Calculate Trend Badge (↗, ↘, →)
+// Helper: Calculate Trend Badge (↗, ↘, →) based on Delta between Year 3 and Year 2
 function getTrendBadge(values, isInflation = false) {
   if (!values || values.length < 2) return '';
-  const first = values[0];
-  const last = values[values.length - 1];
-  const diff = last - first;
+  const prev = values[values.length - 2]; // Jahr 2 (z. B. 2026)
+  const current = values[values.length - 1]; // Jahr 3 (z. B. 2027)
+  const diff = current - prev;
 
-  if (Math.abs(diff) <= 0.15) {
-    return `<span class="trend-pill neutral" title="Stabil (Δ ${diff >= 0 ? '+' : ''}${diff.toFixed(1)}%-Punkte)">→ 0.0</span>`;
+  if (Math.abs(diff) <= 0.05) {
+    return `<span class="trend-pill neutral" title="Stabil (Δ '27/'26: ${diff >= 0 ? '+' : ''}${diff.toFixed(1)}%-Punkte)">→ 0.0</span>`;
   }
-  if (diff > 0.15) {
+  if (diff > 0.05) {
     const cls = isInflation ? 'trend-pill alert' : 'trend-pill positive';
-    return `<span class="${cls}" title="Steigend (+${diff.toFixed(1)}%-Punkte)">↗ +${diff.toFixed(1)}</span>`;
+    return `<span class="${cls}" title="Steigend (Δ '27/'26: +${diff.toFixed(1)}%-Punkte)">↗ +${diff.toFixed(1)}</span>`;
   } else {
     const cls = isInflation ? 'trend-pill positive' : 'trend-pill warning';
-    return `<span class="${cls}" title="Rückläufig (${diff.toFixed(1)}%-Punkte)">↘ ${diff.toFixed(1)}</span>`;
+    return `<span class="${cls}" title="Rückläufig (Δ '27/'26: ${diff.toFixed(1)}%-Punkte)">↘ ${diff.toFixed(1)}</span>`;
   }
 }
 
@@ -2072,7 +2072,7 @@ function renderForecasts(raw) {
 
   container.innerHTML = `
     <div class="forecast-legend">
-      <span style="font-weight: 700; color: var(--lukb-blue-900);">3-Jahres-Dynamik (2025 → 2027):</span>
+      <span style="font-weight: 700; color: var(--lukb-blue-900);">Dynamik (Verlauf 2025–2027 | Trend Δ '27 vs '26):</span>
       <span style="display: inline-flex; align-items: center; gap: 4px;">
         <span class="trend-pill positive">↗ Steigend</span>
         <span>Beschleunigung / Disinflation</span>

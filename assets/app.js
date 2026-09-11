@@ -1126,6 +1126,277 @@ function updateCheckboxUI() {
 }
 
 // -------------------------------------------------------------
+// 4. A4-PDF REPORT GENERATOR (Pure Vector PDF via pdfmake)
+// -------------------------------------------------------------
+let cachedForecastRawData = [];
+
+function exportA4Report() {
+  if (typeof pdfMake === 'undefined') {
+    alert('PDF-Bibliothek wird geladen. Bitte einen Augenblick warten oder Internetverbindung prüfen.');
+    return;
+  }
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const formattedToday = formatDateDE(todayStr);
+
+  // 1. Prepare Macro Calendar Table Data
+  const macroData = normalizeMacroData(cachedMacroRawData || []);
+  const macroBody = [
+    [
+      { text: 'Datum', style: 'th', width: '20%' },
+      { text: 'Zeit', style: 'th', width: '11%' },
+      { text: 'Land', style: 'th', width: '17%' },
+      { text: 'Indikator', style: 'th', width: '32%' },
+      { text: 'Vorher', style: 'thNum', width: '10%' },
+      { text: 'Erwart.', style: 'thNum', width: '10%' }
+    ]
+  ];
+
+  let lastDay = '';
+  macroData.slice(0, 13).forEach(item => {
+    const isNewDay = item.datumDisplay !== lastDay;
+    if (isNewDay) lastDay = item.datumDisplay;
+    macroBody.push([
+      { text: isNewDay ? item.datumDisplay : '', style: isNewDay ? 'tdDate' : 'tdMuted', fillColor: isNewDay ? '#F0F5FA' : null },
+      { text: item.uhrzeit || '-', style: 'tdCode' },
+      { text: item.land || item.land_code, style: 'tdBold' },
+      { text: item.indikator, style: 'tdText' },
+      { text: item.vorher || '-', style: 'tdNum' },
+      { text: item.erwartung || '-', style: 'tdNumBerry' }
+    ]);
+  });
+
+  // 2. Prepare Central Bank Upcoming Meetings Data
+  const cbEvents = (cachedCbEvents || [])
+    .filter(d => DashboardState.selectedBanks.has(d.bank) && d.datum >= todayStr)
+    .sort((a, b) => a.datum.localeCompare(b.datum))
+    .slice(0, 7);
+
+  const cbBody = [
+    [
+      { text: 'Zentralbank', style: 'th', width: '26%' },
+      { text: 'Datum', style: 'th', width: '32%' },
+      { text: 'Woche', style: 'thCenter', width: '15%' },
+      { text: 'Fälligkeit', style: 'thNum', width: '27%' }
+    ]
+  ];
+
+  cbEvents.forEach(item => {
+    const countdown = getRelativeTimeBadge(item.datum, todayStr).replace(/<[^>]*>/g, '');
+    cbBody.push([
+      { text: `${item.bank} (${item.land_code})`, style: 'tdBold' },
+      { text: formatDateDE(item.datum), style: 'tdText' },
+      { text: `KW ${getISOWeek(item.datum)}`, style: 'tdCenter' },
+      { text: countdown, style: 'tdNumBerry' }
+    ]);
+  });
+
+  // 3. Prepare Forecasts Table Data
+  const forecastObj = normalizeForecasts(cachedForecastRawData || []);
+  const forecastBody = [
+    [
+      { text: 'Land', style: 'th', rowSpan: 2 },
+      { text: 'BIP-Wachstum (%)', style: 'thGroupBlue', colSpan: 3, alignment: 'center' },
+      {}, {},
+      { text: 'Inflation / CPI (%)', style: 'thGroupBerry', colSpan: 3, alignment: 'center' },
+      {}, {}
+    ],
+    [
+      {},
+      { text: '2025', style: 'thSubBlue' },
+      { text: '2026', style: 'thSubBlue' },
+      { text: '2027', style: 'thSubBlue' },
+      { text: '2025', style: 'thSubBerry' },
+      { text: '2026', style: 'thSubBerry' },
+      { text: '2027', style: 'thSubBerry' }
+    ]
+  ];
+
+  if (forecastObj && forecastObj.daten) {
+    forecastObj.daten.forEach(row => {
+      const isSpecial = row.land === 'Schweiz' || row.land === 'Welt';
+      const bg = isSpecial ? '#F8FAFD' : null;
+      forecastBody.push([
+        { text: row.land, style: isSpecial ? 'tdBoldBlue' : 'tdText', fillColor: bg },
+        { text: row.bip['2025'] !== undefined ? `${row.bip['2025'].toFixed(1)}%` : '-', style: 'tdNum', fillColor: bg },
+        { text: row.bip['2026'] !== undefined ? `${row.bip['2026'].toFixed(1)}%` : '-', style: 'tdNum', fillColor: bg },
+        { text: row.bip['2027'] !== undefined ? `${row.bip['2027'].toFixed(1)}%` : '-', style: isSpecial ? 'tdNumBold' : 'tdNum', fillColor: bg },
+        { text: row.inflation['2025'] !== undefined ? `${row.inflation['2025'].toFixed(1)}%` : '-', style: 'tdNum', fillColor: bg },
+        { text: row.inflation['2026'] !== undefined ? `${row.inflation['2026'].toFixed(1)}%` : '-', style: 'tdNum', fillColor: bg },
+        { text: row.inflation['2027'] !== undefined ? `${row.inflation['2027'].toFixed(1)}%` : '-', style: isSpecial ? 'tdNumBerryBold' : 'tdNumBerry', fillColor: bg }
+      ]);
+    });
+  }
+
+  const docDefinition = {
+    pageSize: 'A4',
+    pageOrientation: 'landscape',
+    pageMargins: [26, 20, 26, 18],
+    content: [
+      // Top Header
+      {
+        columns: [
+          {
+            width: '*',
+            stack: [
+              {
+                text: [
+                  { text: 'LUKB ', style: 'brandLogo' },
+                  { text: 'RESEARCH  ', style: 'brandSub' },
+                  { text: '|  Makro- & Zentralbank-Dashboard', style: 'docTitle' }
+                ]
+              },
+              { text: 'Wöchentliche Konjunkturdaten, anstehende Zinsentscheide und 3-Jahres-Prognosen', style: 'docSub' }
+            ]
+          },
+          {
+            width: 'auto',
+            alignment: 'right',
+            stack: [
+              { text: `Stand: ${formattedToday}`, style: 'metaDate' },
+              { text: 'LUKB Intranet Briefing (1-Page Executive Summary)', style: 'metaBadge' }
+            ]
+          }
+        ]
+      },
+      {
+        canvas: [
+          { type: 'line', x1: 0, y1: 5, x2: 790, y2: 5, lineWidth: 2, lineColor: '#003B6D' },
+          { type: 'line', x1: 0, y1: 8, x2: 790, y2: 8, lineWidth: 1, lineColor: '#B31F59' }
+        ],
+        margin: [0, 0, 0, 8]
+      },
+      // 2 Columns layout
+      {
+        columnGap: 14,
+        columns: [
+          // Left Column: Macro Calendar (51% width)
+          {
+            width: '51%',
+            stack: [
+              {
+                text: '📅 Konjunkturdaten (Laufende Woche)',
+                style: 'sectionHeaderBlue'
+              },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: ['20%', '11%', '17%', '32%', '10%', '10%'],
+                  body: macroBody
+                },
+                layout: {
+                  hLineWidth: (i) => (i === 0 || i === 1) ? 1.5 : 0.5,
+                  vLineWidth: () => 0,
+                  hLineColor: (i) => (i === 1) ? '#003B6D' : '#E2E8F0',
+                  paddingLeft: () => 3,
+                  paddingRight: () => 3,
+                  paddingTop: () => 2.2,
+                  paddingBottom: () => 2.2
+                }
+              }
+            ]
+          },
+          // Right Column: Central Banks + Forecasts (49% width)
+          {
+            width: '49%',
+            stack: [
+              // Central Banks
+              {
+                text: '🏛️ Anstehende Notenbank-Zinstermine',
+                style: 'sectionHeaderBerry'
+              },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: ['26%', '32%', '15%', '27%'],
+                  body: cbBody
+                },
+                layout: {
+                  hLineWidth: (i) => (i === 0 || i === 1) ? 1.5 : 0.5,
+                  vLineWidth: () => 0,
+                  hLineColor: (i) => (i === 1) ? '#B31F59' : '#E2E8F0',
+                  paddingLeft: () => 3,
+                  paddingRight: () => 3,
+                  paddingTop: () => 2.2,
+                  paddingBottom: () => 2.2
+                },
+                margin: [0, 0, 0, 9]
+              },
+              // Forecasts
+              {
+                text: '📊 BIP- & Inflationsprognosen (Konsensus)',
+                style: 'sectionHeaderBlue'
+              },
+              {
+                table: {
+                  headerRows: 2,
+                  widths: ['22%', '13%', '13%', '13%', '13%', '13%', '13%'],
+                  body: forecastBody
+                },
+                layout: {
+                  hLineWidth: (i) => (i === 0 || i === 2) ? 1.5 : 0.5,
+                  vLineWidth: (i) => (i === 1 || i === 4) ? 1 : 0,
+                  hLineColor: (i) => (i === 2) ? '#003B6D' : '#E2E8F0',
+                  vLineColor: () => '#CBD5E1',
+                  paddingLeft: () => 3,
+                  paddingRight: () => 3,
+                  paddingTop: () => 2,
+                  paddingBottom: () => 2
+                }
+              }
+            ]
+          }
+        ]
+      },
+      // Footer
+      {
+        margin: [0, 8, 0, 0],
+        columns: [
+          { text: 'Datenquelle: LUKB Research, LSEG, Zentralbanken | Alle Angaben ohne Gewähr', style: 'footerText' },
+          { text: 'Luzerner Kantonalbank AG • Intranet Executive Briefing', style: 'footerCenter', alignment: 'center' },
+          { text: 'Seite 1 / 1', style: 'footerText', alignment: 'right' }
+        ]
+      }
+    ],
+    styles: {
+      brandLogo: { fontSize: 13, bold: true, color: '#B31F59' },
+      brandSub: { fontSize: 11, bold: true, color: '#003B6D' },
+      docTitle: { fontSize: 11, bold: true, color: '#003B6D' },
+      docSub: { fontSize: 7.5, color: '#64748B', margin: [0, 1, 0, 0] },
+      metaDate: { fontSize: 8.5, bold: true, color: '#003B6D' },
+      metaBadge: { fontSize: 7, color: '#64748B' },
+      sectionHeaderBlue: { fontSize: 8.5, bold: true, color: '#003B6D', margin: [0, 0, 0, 3] },
+      sectionHeaderBerry: { fontSize: 8.5, bold: true, color: '#B31F59', margin: [0, 0, 0, 3] },
+      th: { fontSize: 7, bold: true, color: '#003B6D', fillColor: '#F0F5FA' },
+      thNum: { fontSize: 7, bold: true, color: '#003B6D', fillColor: '#F0F5FA', alignment: 'right' },
+      thCenter: { fontSize: 7, bold: true, color: '#003B6D', fillColor: '#F0F5FA', alignment: 'center' },
+      thGroupBlue: { fontSize: 7, bold: true, color: '#003B6D', fillColor: '#E1EDF7' },
+      thGroupBerry: { fontSize: 7, bold: true, color: '#B31F59', fillColor: '#FDF0F6' },
+      thSubBlue: { fontSize: 6.5, bold: true, color: '#003B6D', fillColor: '#F0F5FA', alignment: 'right' },
+      thSubBerry: { fontSize: 6.5, bold: true, color: '#B31F59', fillColor: '#FDF7FA', alignment: 'right' },
+      tdText: { fontSize: 6.8, color: '#1E293B' },
+      tdBold: { fontSize: 6.8, bold: true, color: '#003B6D' },
+      tdBoldBlue: { fontSize: 6.8, bold: true, color: '#003B6D' },
+      tdCode: { fontSize: 6.5, color: '#334155' },
+      tdDate: { fontSize: 6.8, bold: true, color: '#003B6D' },
+      tdMuted: { fontSize: 6.8, color: '#94A3B8' },
+      tdCenter: { fontSize: 6.8, alignment: 'center', color: '#003B6D', bold: true },
+      tdNum: { fontSize: 6.8, alignment: 'right', color: '#1E293B' },
+      tdNumBold: { fontSize: 6.8, alignment: 'right', bold: true, color: '#003B6D' },
+      tdNumBerry: { fontSize: 6.8, alignment: 'right', bold: true, color: '#B31F59' },
+      tdNumBerryBold: { fontSize: 6.8, alignment: 'right', bold: true, color: '#B31F59' },
+      footerText: { fontSize: 6.5, color: '#94A3B8' },
+      footerCenter: { fontSize: 6.5, color: '#64748B', bold: true }
+    },
+    defaultStyle: {
+      font: 'Roboto'
+    }
+  };
+
+  pdfMake.createPdf(docDefinition).open();
+}
+
+// -------------------------------------------------------------
 // INITIALIZATION
 // -------------------------------------------------------------
 async function initDashboard() {
@@ -1166,8 +1437,16 @@ async function initDashboard() {
   } catch (e) {
     console.error('Fehler beim Laden von prognosen.json:', e);
   }
+  cachedForecastRawData = forecastData || [];
   if (forecastData) {
     renderForecasts(forecastData);
+  }
+
+  // 4. Attach PDF Export Event Listener
+  const btnExport = document.getElementById('btn-export-pdf');
+  if (btnExport && !btnExport.dataset.initialized) {
+    btnExport.dataset.initialized = 'true';
+    btnExport.addEventListener('click', exportA4Report);
   }
 }
 

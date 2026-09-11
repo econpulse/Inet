@@ -101,6 +101,32 @@ html, body {
   gap: 8px;
 }
 
+.lukb-btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background-color: var(--lukb-berry-600);
+  color: #FFFFFF;
+  border: 1px solid var(--lukb-berry-700);
+  padding: 7px 15px;
+  font-family: var(--font-family-main);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(179, 31, 89, 0.2);
+  transition: all 0.15s ease;
+}
+
+.lukb-btn-export:hover {
+  background-color: var(--lukb-berry-700);
+  box-shadow: 0 2px 6px rgba(179, 31, 89, 0.35);
+  transform: translateY(-1px);
+}
+
+.lukb-btn-export:active {
+  transform: translateY(0);
+}
+
 .lukb-badge-berry {
   background-color: var(--lukb-berry-600);
   color: #fff;

@@ -107,6 +107,53 @@ function formatMonthYearDE(dateStr) {
   return `${monthName} ${y}`;
 }
 
+// Helper: Calculate ISO 8601 Calendar Week
+function getISOWeek(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const target = new Date(Date.UTC(y, m - 1, d));
+  const dayNr = (target.getUTCDay() + 6) % 7;
+  target.setUTCDate(target.getUTCDate() - dayNr + 3);
+  const firstThursday = target.getTime();
+  target.setUTCMonth(0, 1);
+  if (target.getUTCDay() !== 4) {
+    target.setUTCMonth(0, 1 + ((4 - target.getUTCDay()) + 7) % 7);
+  }
+  return 1 + Math.ceil((firstThursday - target.getTime()) / 604800000);
+}
+
+// Helper: Calculate Relative Countdown Badge
+function getRelativeTimeBadge(dateStr, todayStr) {
+  if (!dateStr || !todayStr) return '';
+  const [y1, m1, d1] = dateStr.split('-').map(Number);
+  const [y2, m2, d2] = todayStr.split('-').map(Number);
+  const target = new Date(y1, m1 - 1, d1);
+  const today = new Date(y2, m2 - 1, d2);
+  const diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) {
+    return `<span class="time-badge past">Vergangen</span>`;
+  }
+  if (diffDays === 0) {
+    return `<span class="time-badge urgent">Heute</span>`;
+  }
+  if (diffDays === 1) {
+    return `<span class="time-badge urgent">Morgen</span>`;
+  }
+  if (diffDays <= 7) {
+    return `<span class="time-badge urgent">In ${diffDays} Tagen</span>`;
+  }
+  if (diffDays <= 14) {
+    return `<span class="time-badge soon">In ~2 Wochen</span>`;
+  }
+  if (diffDays <= 45) {
+    const weeks = Math.round(diffDays / 7);
+    return `<span class="time-badge medium">In ${weeks} Wochen</span>`;
+  }
+  const months = Math.round(diffDays / 30.43);
+  return `<span class="time-badge normal">In ${months} Monaten</span>`;
+}
+
 // -------------------------------------------------------------
 // 1. RENDER MAKROKALENDER (Dynamic Country Filter & Day Grouping)
 // -------------------------------------------------------------
@@ -458,10 +505,10 @@ function renderCentralBankTable(events, todayStr) {
         <td style="font-weight: 700; color: var(--lukb-blue-900); width: 140px;">
           ${getCountryBadge(item.land_code, item.bank)}
         </td>
-        <td style="color: var(--text-muted); font-size: 13px;">${item.name}</td>
-        <td style="font-weight: 600; white-space: nowrap; width: 160px;">${formatDateDE(item.datum)}</td>
-        <td style="width: 140px;">${item.typ}</td>
-        <td style="color: var(--text-muted); font-size: 12px;">Planmässiger Zinsentscheid</td>
+        <td style="color: var(--text-dark); font-size: 13px;">${item.name}</td>
+        <td style="font-weight: 600; white-space: nowrap; width: 150px;">${formatDateDE(item.datum)}</td>
+        <td class="center" style="width: 80px;"><span class="kw-badge">KW ${getISOWeek(item.datum)}</span></td>
+        <td style="width: 140px; text-align: right;">${getRelativeTimeBadge(item.datum, todayStr)}</td>
       </tr>
     `;
   });
@@ -471,10 +518,10 @@ function renderCentralBankTable(events, todayStr) {
       <thead>
         <tr>
           <th style="width: 140px;">Zentralbank</th>
-          <th>Name</th>
-          <th style="width: 160px;">Datum</th>
-          <th style="width: 140px;">Art des Entscheids</th>
-          <th>Status / Notiz</th>
+          <th>Institution</th>
+          <th style="width: 150px;">Datum</th>
+          <th class="center" style="width: 80px;">Woche</th>
+          <th style="width: 140px; text-align: right;">Fälligkeit</th>
         </tr>
       </thead>
       <tbody>
